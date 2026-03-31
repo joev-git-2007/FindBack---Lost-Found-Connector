@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>FindBack — Lost & Found Connector</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+<script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<style>
+  :root {
+    --bg:#F7F5F0;--surface:#FFFFFF;--surface2:#F0EDE6;--border:#E2DDD5;
+    --text:#1A1714;--text2:#6B6560;--text3:#A09A93;
+    --accent:#E8390E;--accent2:#FF6B3D;
+    --lost:#D44000;--found:#1A7A4A;--lost-bg:#FFF0EB;--found-bg:#EDFAF3;
+    --shadow:0 2px 12px rgba(26,23,20,.08);--shadow-lg:0 8px 32px rgba(26,23,20,.12);
+    --radius:12px;--radius-sm:8px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+  body.modal-open{overflow:hidden}
+
+  /* NAV */
+  nav{background:var(--text);padding:0 32px;display:flex;align-items:center;justify-content:space-between;height:64px;position:sticky;top:0;z-index:100}
+  .logo{font-family:'Syne',sans-serif;font-weight:800;font-size:1.5rem;color:#fff;letter-spacing:-.5px;cursor:pointer}
+  .logo span{color:var(--accent2)}
+  .nav-actions{display:flex;gap:12px;align-items:center}
+
+  /* BUTTONS */
+  .btn{padding:10px 20px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.9rem;font-weight:500;cursor:pointer;border:none;transition:all .15s ease;white-space:nowrap}
+  .btn-ghost{background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,.3)}
+  .btn-ghost:hover{border-color:#fff;background:rgba(255,255,255,.08)}
+  .btn-primary{background:var(--accent);color:#fff}
+  .btn-primary:hover{background:#c42e0b;transform:translateY(-1px)}
+  .btn-found{background:var(--found);color:#fff}
+  .btn-found:hover{background:#155e38}
+  .btn-danger{background:#c0392b;color:#fff}
+  .btn-danger:hover{background:#a93226}
+  .btn-outline{background:transparent;color:var(--text);border:1.5px solid var(--border)}
+  .btn-outline:hover{border-color:var(--text)}
+  .btn-sm{padding:6px 14px;font-size:.82rem}
+  .btn-lg{padding:14px 28px;font-size:1rem}
+  .btn:disabled{opacity:.6;cursor:not-allowed;transform:none!important}
+
+  /* HERO */
+  .hero{background:var(--text);padding:64px 32px;text-align:center;position:relative;overflow:hidden}
+  .hero::before{content:'';position:absolute;top:-60px;left:50%;transform:translateX(-50%);width:600px;height:600px;background:radial-gradient(circle,rgba(232,57,14,.15) 0%,transparent 70%);pointer-events:none}
+  .hero h1{font-family:'Syne',sans-serif;font-size:clamp(2rem,5vw,3.5rem);font-weight:800;color:#fff;line-height:1.1;margin-bottom:16px}
+  .hero h1 span{color:var(--accent2)}
+  .hero p{color:rgba(255,255,255,.6);font-size:1.05rem;max-width:480px;margin:0 auto 32px;font-weight:300;line-height:1.6}
+  .hero-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+
+  /* STATS */
+  .stats-bar{background:var(--surface);border-bottom:1px solid var(--border);padding:16px 32px;display:flex;justify-content:center;gap:40px;flex-wrap:wrap}
+  .stat-item{text-align:center}
+  .stat-num{font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:700;color:var(--text)}
+  .stat-label{font-size:.78rem;color:var(--text2);text-transform:uppercase;letter-spacing:.5px}
+
+  /* SEARCH */
+  .search-section{background:var(--surface);border-bottom:1px solid var(--border);padding:20px 32px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+  .search-wrap{flex:1;min-width:200px;position:relative}
+  .search-wrap svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text3);pointer-events:none}
+  .search-input{width:100%;padding:11px 14px 11px 42px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:'DM Sans',sans-serif;font-size:.95rem;background:var(--bg);color:var(--text);outline:none;transition:border-color .15s}
+  .search-input:focus{border-color:var(--accent)}
+  select.filter-select{padding:11px 14px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:'DM Sans',sans-serif;font-size:.9rem;background:var(--bg);color:var(--text);outline:none;cursor:pointer}
+  select.filter-select:focus{border-color:var(--accent)}
+
+  /* TABS */
+  .tab-row{padding:20px 32px 0;display:flex;gap:8px;border-bottom:1px solid var(--border);background:var(--surface)}
+  .tab-pill{padding:10px 20px;border-radius:8px 8px 0 0;font-family:'DM Sans',sans-serif;font-size:.9rem;font-weight:500;cursor:pointer;border:none;background:transparent;color:var(--text2);border-bottom:3px solid transparent;transition:all .15s;margin-bottom:-1px}
+  .tab-pill.active{color:var(--accent);border-bottom-color:var(--accent);background:var(--bg)}
+  .tab-pill:hover:not(.active){color:var(--text);background:var(--surface2)}
+
+  /* GRID */
+  .main-wrap{max-width:1280px;margin:0 auto;padding:32px}
+  .section-title{font-family:'Syne',sans-serif;font-size:1.2rem;font-weight:700;margin-bottom:20px;color:var(--text)}
+  .items-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px}
+
+  /* CARD */
+  .item-card{background:var(--surface);border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);cursor:pointer;transition:all .2s ease}
+  .item-card:hover{box-shadow:var(--shadow-lg);transform:translateY(-3px);border-color:transparent}
+  .card-img{width:100%;height:180px;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:3rem;overflow:hidden}
+  .card-img img{width:100%;height:100%;object-fit:cover}
+  .card-body{padding:14px 16px}
+  .card-badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
+  .badge-lost{background:var(--lost-bg);color:var(--lost)}
+  .badge-found{background:var(--found-bg);color:var(--found)}
+  .badge-resolved{background:#f0f0f0;color:#888}
+  .card-title{font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;margin-bottom:6px;line-height:1.3}
+  .card-meta{font-size:.82rem;color:var(--text2);display:flex;align-items:center;gap:6px;margin-top:4px}
+  .card-category{font-size:.8rem;color:var(--text3);margin-top:6px}
+  .card-footer{display:flex;justify-content:space-between;align-items:center;padding:10px 16px;border-top:1px solid var(--border);font-size:.8rem;color:var(--text3)}
+
+
+
+  /* SECURITY NOTICE */
+  .masked-notice{font-size:.75rem;color:var(--text3);font-style:italic;margin-top:6px}
+
+  /* WHATSAPP / SMS BUTTONS */
+  .btn-whatsapp{background:#25D366;color:#fff;display:inline-flex;align-items:center;gap:8px}
+  .btn-whatsapp:hover{background:#1ebe57}
+  .btn-sms{background:#0078D7;color:#fff;display:inline-flex;align-items:center;gap:8px}
+  .btn-sms:hover{background:#005fa3}
+  .contact-actions{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+
+  /* MATCH SUGGESTIONS */
+  .matches-section{margin-top:24px;padding-top:20px;border-top:1px solid var(--border)}
+  .matches-title{font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+  .match-badge{background:#fff3cd;color:#856404;font-size:.72rem;font-weight:600;padding:2px 8px;border-radius:20px;text-transform:uppercase;letter-spacing:.5px}
+  .matches-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
+  .match-card{background:var(--bg);border:1.5px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;cursor:pointer;transition:all .15s}
+  .match-card:hover{border-color:var(--accent);box-shadow:var(--shadow);transform:translateY(-2px)}
+  .match-card-img{width:100%;height:90px;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:1.8rem;overflow:hidden}
+  .match-card-img img{width:100%;height:100%;object-fit:cover}
+  .match-card-body{padding:8px 10px}
+  .match-card-title{font-size:.82rem;font-weight:600;line-height:1.3;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .match-card-loc{font-size:.75rem;color:var(--text2)}
+  .no-matches{color:var(--text3);font-size:.88rem;font-style:italic;padding:8px 0}
+
+  /* MODAL */
+  .modal-overlay{position:fixed;inset:0;background:rgba(26,23,20,.6);backdrop-filter:blur(4px);z-index:200;display:flex;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto;animation:fadeIn .2s ease}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  @keyframes slideUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+  .modal{background:var(--surface);border-radius:16px;width:100%;max-width:620px;margin:auto;animation:slideUp .25s ease}
+  .modal-header{padding:24px 28px 12px;display:flex;justify-content:space-between;align-items:flex-start;position:sticky;top:0;background:var(--surface);z-index:10;border-radius:16px 16px 0 0}
+  .modal-header h2{font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:700}
+  .close-btn{background:var(--surface2);border:none;width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:1.1rem;display:flex;align-items:center;justify-content:center;color:var(--text2);transition:background .15s;flex-shrink:0}
+  .close-btn:hover{background:var(--border)}
+  .modal-body{padding:20px 28px 28px}
+
+  /* FORM */
+  .form-group{margin-bottom:18px}
+  .form-label{display:block;font-size:.85rem;font-weight:500;margin-bottom:6px;color:var(--text)}
+  .form-label span{color:var(--accent)}
+  .form-input,.form-textarea,.form-select{width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:'DM Sans',sans-serif;font-size:.9rem;color:var(--text);background:var(--bg);outline:none;transition:border-color .15s}
+  .form-input:focus,.form-textarea:focus,.form-select:focus{border-color:var(--accent);background:#fff}
+  .form-textarea{resize:vertical;min-height:90px}
+  .form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .type-toggle{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
+  .type-btn{padding:14px;border-radius:var(--radius-sm);border:2px solid var(--border);background:transparent;cursor:pointer;font-family:'Syne',sans-serif;font-size:.95rem;font-weight:700;transition:all .15s;text-align:center}
+  .type-btn.lost-active{border-color:var(--lost);background:var(--lost-bg);color:var(--lost)}
+  .type-btn.found-active{border-color:var(--found);background:var(--found-bg);color:var(--found)}
+
+  /* IMAGE UPLOAD */
+  .img-upload-area{border:2px dashed var(--border);border-radius:var(--radius-sm);padding:24px;text-align:center;cursor:pointer;transition:all .15s;background:var(--bg);position:relative}
+  .img-upload-area:hover{border-color:var(--accent)}
+  .img-upload-area input{position:absolute;inset:0;opacity:0;cursor:pointer}
+  .img-upload-area p{color:var(--text2);font-size:.88rem}
+  .img-preview{width:100%;max-height:180px;object-fit:cover;border-radius:8px;margin-top:10px}
+
+  /* TOKEN SUCCESS BOX */
+  .token-box{background:#fffbeb;border:2px solid #f59e0b;border-radius:var(--radius);padding:20px;margin-bottom:20px}
+  .token-box h3{font-family:'Syne',sans-serif;font-weight:700;color:#92400e;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+  .token-box p{font-size:.88rem;color:#78350f;margin-bottom:12px;line-height:1.5}
+  .token-code{font-family:monospace;font-size:.85rem;background:#fef3c7;border:1px solid #fcd34d;border-radius:6px;padding:10px 14px;word-break:break-all;color:#92400e;letter-spacing:.5px;cursor:pointer;transition:background .15s}
+  .token-code:hover{background:#fde68a}
+  .token-hint{font-size:.78rem;color:#b45309;margin-top:8px;font-style:italic}
+
+  /* DETAIL VIEW */
+  .detail-img{width:100%;height:260px;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:5rem;border-radius:12px;margin-bottom:20px;overflow:hidden}
+  .detail-img img{width:100%;height:100%;object-fit:cover;border-radius:12px}
+  .detail-title{font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:800;margin:12px 0 8px;line-height:1.2}
+  .detail-desc{color:var(--text2);line-height:1.6;margin:12px 0}
+  .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}
+  .info-box{background:var(--bg);border-radius:var(--radius-sm);padding:12px}
+  .info-box-label{font-size:.75rem;text-transform:uppercase;letter-spacing:.5px;color:var(--text3);margin-bottom:4px}
+  .info-box-val{font-weight:500;font-size:.95rem}
+  .contact-box{background:var(--text);color:#fff;border-radius:var(--radius);padding:20px;margin-top:20px}
+  .contact-box h3{font-family:'Syne',sans-serif;color:rgba(255,255,255,.7);text-transform:uppercase;letter-spacing:.5px;font-size:.78rem;margin-bottom:14px}
+  .contact-name{font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:700;margin-bottom:6px}
+  .contact-detail{font-size:.9rem;color:rgba(255,255,255,.75);margin:3px 0}
+
+  /* TOKEN INPUT AREA (for resolve/delete) */
+  .token-input-section{margin-top:20px;padding-top:20px;border-top:1px solid var(--border)}
+  .token-input-section h4{font-family:'Syne',sans-serif;font-size:.95rem;font-weight:700;margin-bottom:6px}
+  .token-input-section p{font-size:.82rem;color:var(--text2);margin-bottom:10px}
+  .token-actions{display:flex;gap:10px;margin-top:10px}
+
+  /* EMPTY */
+  .empty-state{text-align:center;padding:80px 20px;color:var(--text2)}
+  .empty-state .big-icon{font-size:4rem;margin-bottom:16px}
+  .empty-state h3{font-family:'Syne',sans-serif;font-size:1.2rem;color:var(--text);margin-bottom:8px}
+
+  /* TOAST */
+  .toast{position:fixed;bottom:24px;right:24px;background:var(--text);color:#fff;padding:14px 20px;border-radius:10px;font-size:.9rem;z-index:999;animation:slideUp .3s ease;max-width:320px;box-shadow:var(--shadow-lg)}
+  .toast.success{background:var(--found)}
+  .toast.error{background:var(--lost)}
+  .toast.warning{background:#d97706}
+
+  .spinner{width:36px;height:36px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;margin:60px auto}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  @media(max-width:600px){
+    .form-row{grid-template-columns:1fr}
+    .info-grid{grid-template-columns:1fr}
+    .hero{padding:40px 20px}
+    .main-wrap{padding:20px 16px}
+    nav{padding:0 16px}
+    .search-section{padding:16px}
+    .stats-bar{gap:24px;padding:12px}
+    .token-actions{flex-direction:column}
+  }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect } = React;
+const API = "";
+
+const CATEGORY_ICONS = {
+  "Electronics":"📱","Wallets & Purses":"👛","Keys":"🔑","Bags & Luggage":"🎒",
+  "Jewelry & Accessories":"💍","Documents & ID":"📄","Clothing":"👕","Pets":"🐾",
+  "Vehicles":"🚗","Sports Equipment":"⚽","Books":"📚","Other":"📦"
+};
+
+function formatDate(s){ if(!s) return ''; return new Date(s).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}); }
+function timeAgo(s){ const d=Date.now()-new Date(s).getTime(),m=Math.floor(d/60000); if(m<1) return 'just now'; if(m<60) return m+'m ago'; const h=Math.floor(m/60); if(h<24) return h+'h ago'; return Math.floor(h/24)+'d ago'; }
+
+// ── Toast ──
+function Toast({msg,type,onDone}){
+  useEffect(()=>{ const t=setTimeout(onDone,4000); return ()=>clearTimeout(t); },[]);
+  return <div className={`toast ${type}`}>{msg}</div>;
+}
+
+// ── Item Card ──
+function ItemCard({item,onClick}){
+  const icon=CATEGORY_ICONS[item.category]||'📦';
+  return(
+    <div className="item-card" onClick={()=>onClick(item)}>
+      <div className="card-img">
+        {item.image_base64?<img src={item.image_base64} alt={item.title}/>:<span>{icon}</span>}
+      </div>
+      <div className="card-body">
+        <span className={`card-badge badge-${item.status==='resolved'?'resolved':item.type}`}>
+          {item.status==='resolved'?'✓ Resolved':item.type==='lost'?'⚠ Lost':'✓ Found'}
+        </span>
+        <div className="card-title">{item.title}</div>
+        <div className="card-meta"><span>📍</span>{item.location}</div>
+        <div className="card-category">{icon} {item.category}</div>
+      </div>
+      <div className="card-footer">
+        <span>📅 {formatDate(item.date_occurred)}</span>
+        <span>{timeAgo(item.created_at)}</span>
+      </div>
+    </div>
+  );
+}
+
+// ── Token Success Screen (shown once after posting) ──
+function TokenSuccessModal({item, onClose}){
+  useEffect(()=>{ document.body.classList.add('modal-open'); return ()=>document.body.classList.remove('modal-open'); },[]);
+  const [copied, setCopied] = useState(false);
+  const copy = () => {
+    navigator.clipboard.writeText(item.edit_token);
+    setCopied(true);
+    setTimeout(()=>setCopied(false), 2000);
+  };
+  return(
+    <div className="modal-overlay">
+      <div className="modal">
+        <div className="modal-header">
+          <h2>🎉 Item Posted!</h2>
+          <button className="close-btn" onClick={onClose}>✕</button>
+        </div>
+        <div className="modal-body">
+          <div className="token-box">
+            <h3>⚠️ Save Your Edit Token</h3>
+            <p>This token lets you <strong>mark your item as resolved</strong> or <strong>delete it</strong> later. It will <strong>never be shown again</strong> — copy it now!</p>
+            <div className="token-code" onClick={copy} title="Click to copy">
+              {item.edit_token}
+            </div>
+            <div className="token-hint">
+              {copied ? '✓ Copied to clipboard!' : '👆 Click the token to copy it'}
+            </div>
+          </div>
+          <div style={{background:'var(--found-bg)',borderRadius:'var(--radius-sm)',padding:'14px',fontSize:'.88rem',color:'var(--found)',lineHeight:1.5}}>
+            <strong>Your item "{item.title}"</strong> is now live. Anyone who finds a match can contact you at <strong>{item.contact_email}</strong>.
+          </div>
+          <button className="btn btn-found btn-lg" style={{width:'100%',marginTop:16}} onClick={onClose}>
+            View All Listings
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Detail Modal ──
+function DetailModal({item, onClose, onResolve, onDelete, showToast}){
+  useEffect(()=>{ document.body.classList.add('modal-open'); return ()=>document.body.classList.remove('modal-open'); },[]);
+  const icon = CATEGORY_ICONS[item.category]||'📦';
+  const [token, setToken] = useState('');
+  const [actionLoading, setActionLoading] = useState('');
+  const [matches, setMatches] = useState([]);
+  const [matchLoading, setMatchLoading] = useState(true);
+
+  // Fetch match suggestions: opposite type, same category
+  useEffect(()=>{
+    const oppositeType = item.type === 'lost' ? 'found' : 'lost';
+    fetch(`${API}/items?type=${oppositeType}&category=${encodeURIComponent(item.category)}&status=active`)
+      .then(r=>r.json())
+      .then(data=>{ setMatches(data.filter(m=>m.id!==item.id).slice(0,6)); })
+      .catch(()=>{})
+      .finally(()=>setMatchLoading(false));
+  },[item.id]);
+
+  const handleAction = async (action) => {
+    if(!token.trim()){ showToast('Please enter your edit token first','error'); return; }
+    setActionLoading(action);
+    try {
+      const res = await fetch(`${API}/items/${item.id}/${action==='delete'?'':action}`, {
+        method: action==='delete'?'DELETE':'PATCH',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({edit_token: token.trim()})
+      });
+      if(res.status===403){ showToast('❌ Invalid token — only the poster can do this','error'); return; }
+      if(!res.ok){ showToast('Something went wrong','error'); return; }
+      if(action==='resolve') onResolve();
+      else onDelete();
+    } catch { showToast('Could not connect to backend','error'); }
+    finally { setActionLoading(''); }
+  };
+
+  // Format phone for WhatsApp (strip spaces, dashes; add country code if missing)
+  const waPhone = (phone) => {
+    let p = phone.replace(/[^0-9+]/g,'');
+    if(p.startsWith('0')) p = '91' + p.slice(1);
+    if(!p.startsWith('+') && !p.startsWith('91')) p = '91' + p;
+    return p.replace('+','');
+  };
+
+  return(
+    <div className="modal-overlay" onClick={e=>e.target===e.currentTarget&&onClose()}>
+      <div className="modal">
+        <div className="modal-header">
+          <span className={`card-badge badge-${item.status==='resolved'?'resolved':item.type}`} style={{marginTop:4}}>
+            {item.status==='resolved'?'✓ Resolved':item.type==='lost'?'⚠ Lost':'✓ Found'}
+          </span>
+          <button className="close-btn" onClick={onClose}>✕</button>
+        </div>
+        <div className="modal-body">
+          <div className="detail-img">
+            {item.image_base64?<img src={item.image_base64} alt={item.title}/>:<span>{icon}</span>}
+          </div>
+          <div className="detail-title">{item.title}</div>
+          <p className="detail-desc">{item.description}</p>
+          <div className="info-grid">
+            <div className="info-box"><div className="info-box-label">Category</div><div className="info-box-val">{icon} {item.category}</div></div>
+            <div className="info-box"><div className="info-box-label">Location</div><div className="info-box-val">📍 {item.location}</div></div>
+            <div className="info-box"><div className="info-box-label">Date {item.type==='lost'?'Lost':'Found'}</div><div className="info-box-val">📅 {formatDate(item.date_occurred)}</div></div>
+            <div className="info-box"><div className="info-box-label">Posted</div><div className="info-box-val">{timeAgo(item.created_at)}</div></div>
+          </div>
+
+          <div className="contact-box">
+            <h3>Contact Poster</h3>
+            <div className="contact-name">{item.contact_name}</div>
+            <div className="contact-detail">✉ {item.contact_email}</div>
+            {item.contact_phone&&<div className="contact-detail">📞 {item.contact_phone}</div>}
+            <div className="masked-notice">⚠ Contact details are partially hidden in listings for privacy. Full details shown here after you click.</div>
+            <div className="contact-actions">
+              <a
+                href={`mailto:${item.contact_email}?subject=Regarding your ${item.type} item: ${item.title}`}
+                className="btn btn-sm btn-outline"
+                style={{color:'#fff',borderColor:'rgba(255,255,255,0.3)',textDecoration:'none'}}
+              >✉ Email</a>
+              {item.contact_phone&&<>
+                <a
+                  href={`https://wa.me/${waPhone(item.contact_phone)}?text=Hi, I saw your ${item.type} item listing "${item.title}" on FindBack. I think I can help!`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="btn btn-sm btn-whatsapp"
+                  style={{textDecoration:'none'}}
+                >
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                  WhatsApp
+                </a>
+                <a
+                  href={`sms:${item.contact_phone}?body=Hi, I saw your ${item.type} item listing "${item.title}" on FindBack. I think I can help!`}
+                  className="btn btn-sm btn-sms"
+                  style={{textDecoration:'none'}}
+                >💬 SMS</a>
+              </>}
+            </div>
+          </div>
+
+          {/* ── Match Suggestions ── */}
+          <div className="matches-section">
+            <div className="matches-title">
+              🔍 Possible Matches
+              <span className="match-badge">{item.type==='lost'?'Found items in same category':'Lost items in same category'}</span>
+            </div>
+            {matchLoading?(
+              <div style={{color:'var(--text3)',fontSize:'.88rem'}}>Looking for matches...</div>
+            ):matches.length===0?(
+              <div className="no-matches">No matches found yet in "{item.category}". Check back later!</div>
+            ):(
+              <div className="matches-grid">
+                {matches.map(m=>{
+                  const mIcon = CATEGORY_ICONS[m.category]||'📦';
+                  return(
+                    <div key={m.id} className="match-card" onClick={()=>{ onClose(); setTimeout(()=>document.dispatchEvent(new CustomEvent('openItem',{detail:m})),100); }}>
+                      <div className="match-card-img">
+                        {m.image_base64?<img src={m.image_base64} alt={m.title}/>:<span>{mIcon}</span>}
+                      </div>
+                      <div className="match-card-body">
+                        <div className="match-card-title">{m.title}</div>
+                        <div className="match-card-loc">📍 {m.location}</div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          {item.status==='active'&&(
+            <div className="token-input-section">
+              <h4>🔑 Are you the poster?</h4>
+              <p>Enter your edit token to manage this listing.</p>
+              <input
+                className="form-input"
+                placeholder="Paste your edit token here..."
+                value={token}
+                onChange={e=>setToken(e.target.value)}
+              />
+              <div className="token-actions">
+                <button
+                  className="btn btn-found"
+                  disabled={actionLoading==='resolve'}
+                  onClick={()=>handleAction('resolve')}
+                >
+                  {actionLoading==='resolve'?'Saving...':'✓ Mark as Resolved / Returned'}
+                </button>
+                <button
+                  className="btn btn-danger btn-sm"
+                  disabled={actionLoading==='delete'}
+                  onClick={()=>handleAction('delete')}
+                >
+                  {actionLoading==='delete'?'Deleting...':'🗑 Delete Listing'}
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Post Modal ──
+function PostModal({defaultType, onClose, onSuccess, categories}){
+  useEffect(()=>{ document.body.classList.add('modal-open'); return ()=>document.body.classList.remove('modal-open'); },[]);
+  const [form, setForm] = useState({
+    type:defaultType||'lost', title:'', description:'',
+    category:categories[0]||'Other', location:'',
+    date_occurred:new Date().toISOString().split('T')[0],
+    contact_name:'', contact_email:'', contact_phone:'', image_base64:''
+  });
+  const [loading, setLoading] = useState(false);
+  const [imgPreview, setImgPreview] = useState('');
+  const set = (k,v) => setForm(f=>({...f,[k]:v}));
+
+  const handleImg = e => {
+    const file=e.target.files[0]; if(!file) return;
+    const r=new FileReader();
+    r.onload=ev=>{ setImgPreview(ev.target.result); set('image_base64',ev.target.result); };
+    r.readAsDataURL(file);
+  };
+
+  const submit = async () => {
+    if(!form.title||!form.description||!form.location||!form.contact_name||!form.contact_email){
+      alert('Please fill in all required fields.'); return;
+    }
+    setLoading(true);
+    try {
+      const res = await fetch(`${API}/items`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(form)});
+      if(!res.ok) throw new Error();
+      const data = await res.json();
+      onSuccess(data);  // passes full response including edit_token
+    } catch { alert('Could not post item. Make sure the backend is running.'); }
+    finally { setLoading(false); }
+  };
+
+  return(
+    <div className="modal-overlay" onClick={e=>e.target===e.currentTarget&&onClose()}>
+      <div className="modal">
+        <div className="modal-header">
+          <h2>Post an Item</h2>
+          <button className="close-btn" onClick={onClose}>✕</button>
+        </div>
+        <div className="modal-body">
+          <p style={{color:'var(--text2)',fontSize:'.88rem',marginBottom:18}}>Are you posting about a lost or found item?</p>
+          <div className="type-toggle">
+            <button className={`type-btn ${form.type==='lost'?'lost-active':''}`} onClick={()=>set('type','lost')}>⚠ I Lost Something</button>
+            <button className={`type-btn ${form.type==='found'?'found-active':''}`} onClick={()=>set('type','found')}>✓ I Found Something</button>
+          </div>
+
+          <div className="form-group">
+            <label className="form-label">Title <span>*</span></label>
+            <input className="form-input" placeholder="e.g. Black leather wallet with ID cards" value={form.title} onChange={e=>set('title',e.target.value)}/>
+          </div>
+          <div className="form-group">
+            <label className="form-label">Description <span>*</span></label>
+            <textarea className="form-textarea" placeholder="Describe the item — colour, brand, any distinguishing features..." value={form.description} onChange={e=>set('description',e.target.value)}/>
+          </div>
+          <div className="form-row">
+            <div className="form-group">
+              <label className="form-label">Category <span>*</span></label>
+              <select className="form-select" value={form.category} onChange={e=>set('category',e.target.value)}>
+                {categories.map(c=><option key={c}>{c}</option>)}
+              </select>
+            </div>
+            <div className="form-group">
+              <label className="form-label">Date {form.type==='lost'?'Lost':'Found'} <span>*</span></label>
+              <input type="date" className="form-input" value={form.date_occurred} onChange={e=>set('date_occurred',e.target.value)}/>
+            </div>
+          </div>
+          <div className="form-group">
+            <label className="form-label">Location <span>*</span></label>
+            <input className="form-input" placeholder="e.g. Chennai Central Railway Station" value={form.location} onChange={e=>set('location',e.target.value)}/>
+          </div>
+          <div className="form-group">
+            <label className="form-label">Photo</label>
+            <div className="img-upload-area">
+              <input type="file" accept="image/*" onChange={handleImg}/>
+              {imgPreview?<img src={imgPreview} className="img-preview"/>:<><p>📷 Click to upload a photo</p><p style={{fontSize:'.78rem',marginTop:4}}>PNG, JPG up to 5MB</p></>}
+            </div>
+          </div>
+
+          <div style={{borderTop:'1px solid var(--border)',paddingTop:18,marginTop:4}}>
+            <p style={{fontFamily:'Syne,sans-serif',fontWeight:700,marginBottom:14}}>Your Contact Info</p>
+            <div className="form-row">
+              <div className="form-group">
+                <label className="form-label">Name <span>*</span></label>
+                <input className="form-input" placeholder="Your name" value={form.contact_name} onChange={e=>set('contact_name',e.target.value)}/>
+              </div>
+              <div className="form-group">
+                <label className="form-label">Email <span>*</span></label>
+                <input type="email" className="form-input" placeholder="you@email.com" value={form.contact_email} onChange={e=>set('contact_email',e.target.value)}/>
+              </div>
+            </div>
+            <div className="form-group">
+              <label className="form-label">Phone (optional)</label>
+              <input className="form-input" placeholder="+91 98765 43210" value={form.contact_phone} onChange={e=>set('contact_phone',e.target.value)}/>
+            </div>
+          </div>
+
+          <button
+            className={`btn btn-lg ${form.type==='lost'?'btn-primary':'btn-found'}`}
+            style={{width:'100%',marginTop:8}}
+            onClick={submit} disabled={loading}
+          >
+            {loading?'Posting...':`Post ${form.type==='lost'?'Lost':'Found'} Item`}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── App ──
+function App(){
+  const [items, setItems] = useState([]);
+  const [pagination, setPagination] = useState({total:0, page:1, pages:1});
+  const [stats, setStats] = useState({});
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState('all');
+  const [search, setSearch] = useState('');
+  const [filterCat, setFilterCat] = useState('');
+  const [filterLoc, setFilterLoc] = useState('');
+  const [showPost, setShowPost] = useState(false);
+  const [postType, setPostType] = useState('lost');
+  const [selected, setSelected] = useState(null);
+
+  // Listen for openItem events dispatched by match cards
+  useEffect(()=>{
+    const handler = (e) => setSelected(e.detail);
+    document.addEventListener('openItem', handler);
+    return ()=>document.removeEventListener('openItem', handler);
+  },[]);
+  const [tokenResult, setTokenResult] = useState(null); // item with edit_token shown after post
+  const [toast, setToast] = useState(null);
+
+  const showToast = (msg, type='success') => setToast({msg,type});
+
+  const fetchAll = async (pg=1) => {
+    setLoading(true);
+    try {
+      const p=new URLSearchParams();
+      if(activeTab!=='all') p.set('type',activeTab);
+      if(filterCat) p.set('category',filterCat);
+      if(filterLoc) p.set('location',filterLoc);
+      if(search) p.set('q',search);
+      p.set('page', pg);
+      p.set('limit', 20);
+      const [ir,sr,cr] = await Promise.all([
+        fetch(`${API}/items?${p}`),fetch(`${API}/stats`),fetch(`${API}/categories`)
+      ]);
+      const itemData = await ir.json();
+      setItems(itemData.items || []);
+      setPagination({total: itemData.total, page: itemData.page, pages: itemData.pages});
+      setStats(await sr.json());
+      setCategories(await cr.json());
+    } catch { showToast('Cannot connect to backend. Start the server!','error'); }
+    finally { setLoading(false); }
+  };
+
+  useEffect(()=>{ fetchAll(); },[activeTab,filterCat,filterLoc]);
+
+  const openPost = (type) => { setPostType(type); setShowPost(true); };
+
+  const handlePostSuccess = (data) => {
+    setShowPost(false);
+    setTokenResult(data);   // show the token modal
+    fetchAll();
+  };
+
+  const handleResolve = () => {
+    showToast('Item marked as resolved! 🎉');
+    setSelected(null);
+    fetchAll();
+  };
+
+  const handleDelete = () => {
+    showToast('Listing deleted.','warning');
+    setSelected(null);
+    fetchAll();
+  };
+
+  return(
+    <>
+      <nav>
+        <div className="logo">Find<span>Back</span></div>
+        <div className="nav-actions">
+          <button className="btn btn-ghost" onClick={()=>openPost('lost')}>⚠ I Lost Something</button>
+          <button className="btn btn-primary" onClick={()=>openPost('found')}>+ I Found Something</button>
+        </div>
+      </nav>
+
+      <div className="hero">
+          <h1>Reuniting People<br/>with their <span>Lost Things</span></h1>
+          <p>Post a lost or found item. Help your community recover what matters most.</p>
+          <div className="hero-actions">
+            <button className="btn btn-primary btn-lg" onClick={()=>openPost('lost')}>⚠ I Lost Something</button>
+            <button className="btn btn-found btn-lg" onClick={()=>openPost('found')}>✓ I Found Something</button>
+          </div>
+        </div>
+
+      <div className="stats-bar">
+        <div className="stat-item"><div className="stat-num" style={{color:'var(--lost)'}}>{stats.active_lost??'—'}</div><div className="stat-label">Active Lost</div></div>
+        <div className="stat-item"><div className="stat-num" style={{color:'var(--found)'}}>{stats.active_found??'—'}</div><div className="stat-label">Active Found</div></div>
+        <div className="stat-item"><div className="stat-num">{stats.resolved??'—'}</div><div className="stat-label">Reunited ✓</div></div>
+      </div>
+
+      <div className="search-section">
+        <div className="search-wrap">
+          <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input className="search-input" placeholder="Search items..." value={search} onChange={e=>setSearch(e.target.value)} onKeyDown={e=>e.key==='Enter'&&fetchAll()}/>
+        </div>
+        <select className="filter-select" value={filterCat} onChange={e=>setFilterCat(e.target.value)}>
+          <option value="">All Categories</option>
+          {categories.map(c=><option key={c}>{c}</option>)}
+        </select>
+        <input className="search-input" style={{maxWidth:180}} placeholder="Filter by location..." value={filterLoc} onChange={e=>setFilterLoc(e.target.value)} onKeyDown={e=>e.key==='Enter'&&fetchAll()}/>
+        <button className="btn btn-outline" onClick={fetchAll}>Search</button>
+      </div>
+
+      <div className="tab-row">
+        {[['all','All Items'],['lost','Lost'],['found','Found']].map(([v,l])=>(
+          <button key={v} className={`tab-pill ${activeTab===v?'active':''}`} onClick={()=>setActiveTab(v)}>{l}</button>
+        ))}
+      </div>
+
+      <div className="main-wrap">
+        <div className="section-title">{loading?'Loading...':`${pagination.total} item${pagination.total!==1?'s':''} found`}</div>
+        {loading?<div className="spinner"/>:items.length===0?(
+          <div className="empty-state">
+            <div className="big-icon">🔍</div>
+            <h3>No items found</h3>
+            <p>Try adjusting your filters or be the first to post!</p>
+            <button className="btn btn-primary" style={{marginTop:16}} onClick={()=>openPost('lost')}>Post an Item</button>
+          </div>
+        ):(
+          <>
+          <div className="items-grid">
+            {items.map(item=><ItemCard key={item.id} item={item} onClick={setSelected}/>)}
+          </div>
+          {pagination.pages > 1 && (
+            <div style={{display:'flex',justifyContent:'center',alignItems:'center',gap:12,marginTop:32}}>
+              <button className="btn btn-outline btn-sm" disabled={pagination.page<=1} onClick={()=>fetchAll(pagination.page-1)}>← Prev</button>
+              <span style={{color:'var(--text2)',fontSize:'.9rem'}}>Page {pagination.page} of {pagination.pages}</span>
+              <button className="btn btn-outline btn-sm" disabled={pagination.page>=pagination.pages} onClick={()=>fetchAll(pagination.page+1)}>Next →</button>
+            </div>
+          )}
+          </>
+        )}
+      </div>
+
+      {selected&&(
+        <DetailModal
+          item={selected}
+          onClose={()=>setSelected(null)}
+          onResolve={handleResolve}
+          onDelete={handleDelete}
+          showToast={showToast}
+        />
+      )}
+
+      {showPost&&(
+        <PostModal
+          defaultType={postType}
+          categories={categories}
+          onClose={()=>setShowPost(false)}
+          onSuccess={handlePostSuccess}
+        />
+      )}
+
+      {tokenResult&&(
+        <TokenSuccessModal
+          item={tokenResult}
+          onClose={()=>setTokenResult(null)}
+        />
+      )}
+
+      {toast&&<Toast msg={toast.msg} type={toast.type} onDone={()=>setToast(null)}/>}
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
