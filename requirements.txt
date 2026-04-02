@@ -5,3 +5,4 @@ pydantic_core==2.18.4
 python-multipart==0.0.9
 starlette==0.37.2
 anyio==4.4.0
+psycopg2-binary==2.9.9
