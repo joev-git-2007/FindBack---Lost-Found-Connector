@@ -1,0 +1,1 @@
+python -m uvicorn Main:app --port 8000
