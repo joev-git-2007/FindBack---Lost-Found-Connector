@@ -24,18 +24,14 @@ echo Installing dependencies...
 echo Done!
 echo.
 
-REM !! CHANGE THIS to a strong secret before sharing the app !!
-set ADMIN_SECRET=findback-admin-2024
-
-REM CORS origin
+REM Set allowed origin for CORS (change this to your domain in production)
 set ALLOWED_ORIGIN=http://localhost:8000
 
-echo Admin panel secret: %ADMIN_SECRET%
 echo Starting server at http://localhost:8000
 echo DO NOT close this window while using the app.
 echo Press Ctrl+C to stop.
 echo.
 timeout /t 1 >nul
 start "" "http://localhost:8000"
-%PYTHON% -m uvicorn main:app --port 8000
+%PYTHON% -m uvicorn Main:app --port 8000
 pause
