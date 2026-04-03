@@ -7,7 +7,7 @@ Security fixes applied:
   #4  CORS locked → set ALLOWED_ORIGIN env var
   #5  Request size limit → 2 MB body limit via middleware
   #6  POST rate limiting → max 10 posts per IP per hour
-  #7  SQLite WAL mode → safe for concurrent readers/writers
+  #7  PostgreSQL → persistent cloud database (Supabase)
   #8  Tokens over HTTPS → must deploy behind HTTPS in production
   #9  Pagination → GET /items accepts ?page=&limit= (max 50)
   #10 Contact info masking → email/phone partially masked in list view
@@ -21,7 +21,8 @@ from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import HTMLResponse, JSONResponse
 from pydantic import BaseModel, field_validator
 from typing import Optional, List
-import sqlite3
+import psycopg2
+import psycopg2.extras
 import uuid
 import base64
 import hashlib
@@ -42,9 +43,9 @@ logging.basicConfig(
 log = logging.getLogger("findback")
 
 # ── Config ────────────────────────────────────────────────────────────────────
-ALLOWED_ORIGIN      = os.getenv("ALLOWED_ORIGIN", "http://localhost:8000")
-DB_PATH             = os.getenv("DB_PATH", "lost_and_found.db")
-ADMIN_SECRET        = os.getenv("ADMIN_SECRET", "changeme-set-this-in-env")  # #12
+ALLOWED_ORIGIN      = os.getenv("ALLOWED_ORIGIN", "*")
+DATABASE_URL        = os.getenv("DATABASE_URL")          # e.g. postgresql://user:pass@host/db
+ADMIN_SECRET        = os.getenv("ADMIN_SECRET", "changeme-set-this-in-env")
 MAX_BODY_BYTES      = 2 * 1024 * 1024
 MAX_IMAGE_BYTES     = 2 * 1024 * 1024
 MAX_POSTS_PER_HR    = 10
@@ -81,15 +82,15 @@ async def limit_body_size(request: Request, call_next):
 
 # ── Database ──────────────────────────────────────────────────────────────────
 def get_db():
-    conn = sqlite3.connect(DB_PATH, check_same_thread=False)
-    conn.row_factory = sqlite3.Row
-    conn.execute("PRAGMA journal_mode=WAL")
-    conn.execute("PRAGMA foreign_keys=ON")
+    if not DATABASE_URL:
+        raise RuntimeError("DATABASE_URL environment variable is not set")
+    conn = psycopg2.connect(DATABASE_URL, cursor_factory=psycopg2.extras.RealDictCursor)
     return conn
 
 def init_db():
     conn = get_db()
-    conn.execute("""
+    cur  = conn.cursor()
+    cur.execute("""
         CREATE TABLE IF NOT EXISTS items (
             id            TEXT PRIMARY KEY,
             type          TEXT NOT NULL CHECK(type IN ('lost','found')),
@@ -107,9 +108,9 @@ def init_db():
             created_at    TEXT NOT NULL
         )
     """)
-    conn.execute("""
+    cur.execute("""
         CREATE TABLE IF NOT EXISTS audit_log (
-            id         INTEGER PRIMARY KEY AUTOINCREMENT,
+            id         SERIAL PRIMARY KEY,
             action     TEXT NOT NULL,
             item_id    TEXT,
             ip_address TEXT,
@@ -118,6 +119,7 @@ def init_db():
         )
     """)
     conn.commit()
+    cur.close()
     conn.close()
 
 init_db()
@@ -130,11 +132,13 @@ def get_ip(request: Request) -> str:
 def audit(action: str, item_id: str, ip: str, detail: str = ""):
     try:
         conn = get_db()
-        conn.execute(
-            "INSERT INTO audit_log (action, item_id, ip_address, detail, ts) VALUES (?,?,?,?,?)",
+        cur  = conn.cursor()
+        cur.execute(
+            "INSERT INTO audit_log (action, item_id, ip_address, detail, ts) VALUES (%s,%s,%s,%s,%s)",
             (action, item_id, ip, detail, datetime.utcnow().isoformat())
         )
         conn.commit()
+        cur.close()
         conn.close()
         log.info(f"AUDIT | {action} | item={item_id} | ip={ip} | {detail}")
     except Exception as e:
@@ -144,7 +148,7 @@ def sanitize(text: str, max_len: int = 500) -> str:
     text = text.strip()
     text = re.sub(r'<[^>]+>', '', text)
     text = html.unescape(text)
-    text = re.sub(r'[<>"\']', '', text)
+    text = re.sub(r"""[<>"']""", '', text)
     return text[:max_len]
 
 def mask_email(email: str) -> str:
@@ -195,9 +199,10 @@ def check_token_rate(ip: str, item_id: str):
         raise HTTPException(429, "Too many failed attempts. Try again in 60 seconds.")
     token_attempts[key].append(now)
 
-def verify_token(item_id: str, edit_token: str, conn, ip: str):
+def verify_token(item_id: str, edit_token: str, cur, ip: str):
     check_token_rate(ip, item_id)
-    row = conn.execute("SELECT edit_token FROM items WHERE id=?", (item_id,)).fetchone()
+    cur.execute("SELECT edit_token FROM items WHERE id=%s", (item_id,))
+    row = cur.fetchone()
     if not row:
         raise HTTPException(404, "Item not found")
     stored   = row["edit_token"].encode()
@@ -263,7 +268,7 @@ class ItemCreate(BaseModel):
     @classmethod
     def validate_email(cls, v):
         v = v.strip().lower()
-        if not re.match(r'^[^@\s]+@[^@\s]+\.[^@\s]+$', v):
+        if not re.match(r'^[^\@\s]+@[^\@\s]+\.[^\@\s]+$', v):
             raise ValueError("Invalid email address")
         return v[:200]
 
@@ -346,22 +351,25 @@ def create_item(item: ItemCreate, request: Request):
     edit_token = str(uuid.uuid4()) + "-" + str(uuid.uuid4())
     now        = datetime.utcnow().isoformat()
     conn = get_db()
-    conn.execute("""
+    cur  = conn.cursor()
+    cur.execute("""
         INSERT INTO items
         (id, type, title, description, category, location, date_occurred,
          contact_name, contact_email, contact_phone, image_base64,
          status, edit_token, created_at)
-        VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+        VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
     """, (
         item_id, item.type, item.title, item.description, item.category,
         item.location, item.date_occurred, item.contact_name, item.contact_email,
         item.contact_phone, image_data, "active", edit_token, now
     ))
     conn.commit()
-    row = conn.execute("SELECT * FROM items WHERE id=?", (item_id,)).fetchone()
+    cur.execute("SELECT * FROM items WHERE id=%s", (item_id,))
+    row = dict(cur.fetchone())
+    cur.close()
     conn.close()
     audit("CREATE", item_id, ip, f"type={item.type} title={item.title[:40]}")
-    return dict(row)
+    return row
 
 @app.get("/items", response_model=PaginatedItems)
 def list_items(
@@ -378,24 +386,28 @@ def list_items(
     limit  = min(50, max(1, limit))
     offset = (page - 1) * limit
     conn   = get_db()
+    cur    = conn.cursor()
     where  = "WHERE 1=1"
     params = []
     if type and type in ('lost','found'):
-        where += " AND type=?"; params.append(type)
+        where += " AND type=%s"; params.append(type)
     if category and category in VALID_CATEGORIES:
-        where += " AND category=?"; params.append(category)
+        where += " AND category=%s"; params.append(category)
     if location:
-        where += " AND location LIKE ?"; params.append(f"%{sanitize(location,100)}%")
+        where += " AND location LIKE %s"; params.append(f"%{sanitize(location,100)}%")
     if q:
         sq = f"%{sanitize(q,100)}%"
-        where += " AND (title LIKE ? OR description LIKE ?)"; params.extend([sq, sq])
+        where += " AND (title LIKE %s OR description LIKE %s)"; params.extend([sq, sq])
     if status in ('active','resolved'):
-        where += " AND status=?"; params.append(status)
-    total = conn.execute(f"SELECT COUNT(*) FROM items {where}", params).fetchone()[0]
-    rows  = conn.execute(
-        f"SELECT * FROM items {where} ORDER BY created_at DESC LIMIT ? OFFSET ?",
+        where += " AND status=%s"; params.append(status)
+    cur.execute(f"SELECT COUNT(*) as cnt FROM items {where}", params)
+    total = cur.fetchone()["cnt"]
+    cur.execute(
+        f"SELECT * FROM items {where} ORDER BY created_at DESC LIMIT %s OFFSET %s",
         params + [limit, offset]
-    ).fetchall()
+    )
+    rows = cur.fetchall()
+    cur.close()
     conn.close()
     result = []
     for r in rows:
@@ -408,7 +420,10 @@ def list_items(
 @app.get("/items/{item_id}", response_model=ItemOut)
 def get_item(item_id: str):
     conn = get_db()
-    row  = conn.execute("SELECT * FROM items WHERE id=?", (item_id,)).fetchone()
+    cur  = conn.cursor()
+    cur.execute("SELECT * FROM items WHERE id=%s", (item_id,))
+    row  = cur.fetchone()
+    cur.close()
     conn.close()
     if not row: raise HTTPException(404, "Item not found")
     return dict(row)
@@ -417,9 +432,11 @@ def get_item(item_id: str):
 def resolve_item(item_id: str, body: TokenBody, request: Request):
     ip   = get_ip(request)
     conn = get_db()
-    verify_token(item_id, body.edit_token, conn, ip)
-    conn.execute("UPDATE items SET status='resolved' WHERE id=?", (item_id,))
+    cur  = conn.cursor()
+    verify_token(item_id, body.edit_token, cur, ip)
+    cur.execute("UPDATE items SET status='resolved' WHERE id=%s", (item_id,))
     conn.commit()
+    cur.close()
     conn.close()
     audit("RESOLVE", item_id, ip)
     return {"message": "Item marked as resolved"}
@@ -428,21 +445,29 @@ def resolve_item(item_id: str, body: TokenBody, request: Request):
 def delete_item(item_id: str, body: TokenBody, request: Request):
     ip   = get_ip(request)
     conn = get_db()
-    verify_token(item_id, body.edit_token, conn, ip)
-    row  = conn.execute("SELECT title, type FROM items WHERE id=?", (item_id,)).fetchone()
+    cur  = conn.cursor()
+    verify_token(item_id, body.edit_token, cur, ip)
+    cur.execute("SELECT title, type FROM items WHERE id=%s", (item_id,))
+    row    = cur.fetchone()
     detail = f"title={row['title'][:40]} type={row['type']}" if row else ""
-    conn.execute("DELETE FROM items WHERE id=?", (item_id,))
+    cur.execute("DELETE FROM items WHERE id=%s", (item_id,))
     conn.commit()
+    cur.close()
     conn.close()
     audit("DELETE", item_id, ip, detail)
     return {"message": "Item deleted"}
 
 @app.get("/stats")
 def get_stats():
-    conn     = get_db()
-    lost     = conn.execute("SELECT COUNT(*) FROM items WHERE type='lost'  AND status='active'").fetchone()[0]
-    found    = conn.execute("SELECT COUNT(*) FROM items WHERE type='found' AND status='active'").fetchone()[0]
-    resolved = conn.execute("SELECT COUNT(*) FROM items WHERE status='resolved'").fetchone()[0]
+    conn = get_db()
+    cur  = conn.cursor()
+    cur.execute("SELECT COUNT(*) as cnt FROM items WHERE type='lost'  AND status='active'")
+    lost = cur.fetchone()["cnt"]
+    cur.execute("SELECT COUNT(*) as cnt FROM items WHERE type='found' AND status='active'")
+    found = cur.fetchone()["cnt"]
+    cur.execute("SELECT COUNT(*) as cnt FROM items WHERE status='resolved'")
+    resolved = cur.fetchone()["cnt"]
+    cur.close()
     conn.close()
     return {"active_lost": lost, "active_found": found, "resolved": resolved}
 
@@ -468,20 +493,24 @@ def admin_list_items(
     limit  = min(100, max(1, limit))
     offset = (page - 1) * limit
     conn   = get_db()
+    cur    = conn.cursor()
     where  = "WHERE 1=1"
     params = []
     if status in ('active','resolved'):
-        where += " AND status=?"; params.append(status)
+        where += " AND status=%s"; params.append(status)
     if type and type in ('lost','found'):
-        where += " AND type=?"; params.append(type)
+        where += " AND type=%s"; params.append(type)
     if q:
         sq = f"%{sanitize(q,100)}%"
-        where += " AND (title LIKE ? OR description LIKE ? OR contact_name LIKE ?)"; params.extend([sq,sq,sq])
-    total = conn.execute(f"SELECT COUNT(*) FROM items {where}", params).fetchone()[0]
-    rows  = conn.execute(
-        f"SELECT * FROM items {where} ORDER BY created_at DESC LIMIT ? OFFSET ?",
+        where += " AND (title LIKE %s OR description LIKE %s OR contact_name LIKE %s)"; params.extend([sq,sq,sq])
+    cur.execute(f"SELECT COUNT(*) as cnt FROM items {where}", params)
+    total = cur.fetchone()["cnt"]
+    cur.execute(
+        f"SELECT * FROM items {where} ORDER BY created_at DESC LIMIT %s OFFSET %s",
         params + [limit, offset]
-    ).fetchall()
+    )
+    rows = cur.fetchall()
+    cur.close()
     conn.close()
     return {"items": [dict(r) for r in rows], "total": total, "page": page, "pages": max(1, -(-total // limit))}
 
@@ -490,10 +519,12 @@ def admin_resolve(item_id: str, request: Request, x_admin_secret: Optional[str] 
     require_admin(x_admin_secret)
     ip   = get_ip(request)
     conn = get_db()
-    row  = conn.execute("SELECT id FROM items WHERE id=?", (item_id,)).fetchone()
-    if not row: raise HTTPException(404, "Item not found")
-    conn.execute("UPDATE items SET status='resolved' WHERE id=?", (item_id,))
+    cur  = conn.cursor()
+    cur.execute("SELECT id FROM items WHERE id=%s", (item_id,))
+    if not cur.fetchone(): raise HTTPException(404, "Item not found")
+    cur.execute("UPDATE items SET status='resolved' WHERE id=%s", (item_id,))
     conn.commit()
+    cur.close()
     conn.close()
     audit("ADMIN_RESOLVE", item_id, ip)
     return {"message": "Item marked as resolved by admin"}
@@ -503,10 +534,12 @@ def admin_reopen(item_id: str, request: Request, x_admin_secret: Optional[str] =
     require_admin(x_admin_secret)
     ip   = get_ip(request)
     conn = get_db()
-    row  = conn.execute("SELECT id FROM items WHERE id=?", (item_id,)).fetchone()
-    if not row: raise HTTPException(404, "Item not found")
-    conn.execute("UPDATE items SET status='active' WHERE id=?", (item_id,))
+    cur  = conn.cursor()
+    cur.execute("SELECT id FROM items WHERE id=%s", (item_id,))
+    if not cur.fetchone(): raise HTTPException(404, "Item not found")
+    cur.execute("UPDATE items SET status='active' WHERE id=%s", (item_id,))
     conn.commit()
+    cur.close()
     conn.close()
     audit("ADMIN_REOPEN", item_id, ip)
     return {"message": "Item reopened by admin"}
@@ -516,11 +549,14 @@ def admin_delete(item_id: str, request: Request, x_admin_secret: Optional[str] =
     require_admin(x_admin_secret)
     ip   = get_ip(request)
     conn = get_db()
-    row  = conn.execute("SELECT title, type FROM items WHERE id=?", (item_id,)).fetchone()
+    cur  = conn.cursor()
+    cur.execute("SELECT title, type FROM items WHERE id=%s", (item_id,))
+    row = cur.fetchone()
     if not row: raise HTTPException(404, "Item not found")
     detail = f"title={row['title'][:40]} type={row['type']}"
-    conn.execute("DELETE FROM items WHERE id=?", (item_id,))
+    cur.execute("DELETE FROM items WHERE id=%s", (item_id,))
     conn.commit()
+    cur.close()
     conn.close()
     audit("ADMIN_DELETE", item_id, ip, detail)
     return {"message": "Item deleted by admin"}
@@ -533,9 +569,10 @@ def admin_audit_log(
     require_admin(x_admin_secret)
     limit = min(500, max(1, limit))
     conn  = get_db()
-    rows  = conn.execute(
-        "SELECT * FROM audit_log ORDER BY ts DESC LIMIT ?", (limit,)
-    ).fetchall()
+    cur   = conn.cursor()
+    cur.execute("SELECT * FROM audit_log ORDER BY ts DESC LIMIT %s", (limit,))
+    rows  = cur.fetchall()
+    cur.close()
     conn.close()
     return [dict(r) for r in rows]
 
@@ -543,11 +580,13 @@ def admin_audit_log(
 def admin_full_stats(x_admin_secret: Optional[str] = Header(None)):
     require_admin(x_admin_secret)
     conn = get_db()
-    total    = conn.execute("SELECT COUNT(*) FROM items").fetchone()[0]
-    lost     = conn.execute("SELECT COUNT(*) FROM items WHERE type='lost'  AND status='active'").fetchone()[0]
-    found    = conn.execute("SELECT COUNT(*) FROM items WHERE type='found' AND status='active'").fetchone()[0]
-    resolved = conn.execute("SELECT COUNT(*) FROM items WHERE status='resolved'").fetchone()[0]
-    audit_ct = conn.execute("SELECT COUNT(*) FROM audit_log").fetchone()[0]
+    cur  = conn.cursor()
+    cur.execute("SELECT COUNT(*) as cnt FROM items"); total = cur.fetchone()["cnt"]
+    cur.execute("SELECT COUNT(*) as cnt FROM items WHERE type='lost'  AND status='active'"); lost = cur.fetchone()["cnt"]
+    cur.execute("SELECT COUNT(*) as cnt FROM items WHERE type='found' AND status='active'"); found = cur.fetchone()["cnt"]
+    cur.execute("SELECT COUNT(*) as cnt FROM items WHERE status='resolved'"); resolved = cur.fetchone()["cnt"]
+    cur.execute("SELECT COUNT(*) as cnt FROM audit_log"); audit_ct = cur.fetchone()["cnt"]
+    cur.close()
     conn.close()
     return {
         "total_listings": total,
