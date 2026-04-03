@@ -27,8 +27,6 @@
       --found: #1A7A4A;
       --lost-bg: #FFF0EB;
       --found-bg: #EDFAF3;
-      --admin: #6C3FC8;
-      --admin-bg: #F3EEFF;
       --shadow: 0 2px 12px rgba(26, 23, 20, .08);
       --shadow-lg: 0 8px 32px rgba(26, 23, 20, .12);
       --radius: 12px;
@@ -52,6 +50,7 @@
       overflow: hidden
     }
 
+    /* NAV */
     nav {
       background: var(--text);
       padding: 0 32px;
@@ -79,10 +78,11 @@
 
     .nav-actions {
       display: flex;
-      gap: 10px;
+      gap: 12px;
       align-items: center
     }
 
+    /* BUTTONS */
     .btn {
       padding: 10px 20px;
       border-radius: 8px;
@@ -92,10 +92,7 @@
       cursor: pointer;
       border: none;
       transition: all .15s ease;
-      white-space: nowrap;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px
+      white-space: nowrap
     }
 
     .btn-ghost {
@@ -147,44 +144,8 @@
       border-color: var(--text)
     }
 
-    .btn-admin {
-      background: var(--admin);
-      color: #fff
-    }
-
-    .btn-admin:hover {
-      background: #5a32a8
-    }
-
-    .btn-warning {
-      background: #d97706;
-      color: #fff
-    }
-
-    .btn-warning:hover {
-      background: #b45309
-    }
-
-    .btn-whatsapp {
-      background: #25D366;
-      color: #fff
-    }
-
-    .btn-whatsapp:hover {
-      background: #1ebe57
-    }
-
-    .btn-sms {
-      background: #0078D7;
-      color: #fff
-    }
-
-    .btn-sms:hover {
-      background: #005fa3
-    }
-
     .btn-sm {
-      padding: 6px 12px;
+      padding: 6px 14px;
       font-size: .82rem
     }
 
@@ -199,6 +160,7 @@
       transform: none !important
     }
 
+    /* HERO */
     .hero {
       background: var(--text);
       padding: 64px 32px;
@@ -248,6 +210,7 @@
       flex-wrap: wrap
     }
 
+    /* STATS */
     .stats-bar {
       background: var(--surface);
       border-bottom: 1px solid var(--border);
@@ -276,6 +239,7 @@
       letter-spacing: .5px
     }
 
+    /* SEARCH */
     .search-section {
       background: var(--surface);
       border-bottom: 1px solid var(--border);
@@ -330,6 +294,11 @@
       cursor: pointer
     }
 
+    select.filter-select:focus {
+      border-color: var(--accent)
+    }
+
+    /* TABS */
     .tab-row {
       padding: 20px 32px 0;
       display: flex;
@@ -364,6 +333,7 @@
       background: var(--surface2)
     }
 
+    /* GRID */
     .main-wrap {
       max-width: 1280px;
       margin: 0 auto;
@@ -384,6 +354,7 @@
       gap: 20px
     }
 
+    /* CARD */
     .item-card {
       background: var(--surface);
       border-radius: var(--radius);
@@ -479,6 +450,9 @@
       color: var(--text3)
     }
 
+
+
+    /* SECURITY NOTICE */
     .masked-notice {
       font-size: .75rem;
       color: var(--text3);
@@ -486,13 +460,39 @@
       margin-top: 6px
     }
 
+    /* WHATSAPP / SMS BUTTONS */
+    .btn-whatsapp {
+      background: #25D366;
+      color: #fff;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px
+    }
+
+    .btn-whatsapp:hover {
+      background: #1ebe57
+    }
+
+    .btn-sms {
+      background: #0078D7;
+      color: #fff;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px
+    }
+
+    .btn-sms:hover {
+      background: #005fa3
+    }
+
     .contact-actions {
       display: flex;
-      gap: 8px;
+      gap: 10px;
       margin-top: 14px;
       flex-wrap: wrap
     }
 
+    /* MATCH SUGGESTIONS */
     .matches-section {
       margin-top: 24px;
       padding-top: 20px;
@@ -584,6 +584,7 @@
       padding: 8px 0
     }
 
+    /* MODAL */
     .modal-overlay {
       position: fixed;
       inset: 0;
@@ -629,10 +630,6 @@
       animation: slideUp .25s ease
     }
 
-    .modal-wide {
-      max-width: 960px
-    }
-
     .modal-header {
       padding: 24px 28px 12px;
       display: flex;
@@ -675,6 +672,7 @@
       padding: 20px 28px 28px
     }
 
+    /* FORM */
     .form-group {
       margin-bottom: 18px
     }
@@ -756,6 +754,7 @@
       color: var(--found)
     }
 
+    /* IMAGE UPLOAD */
     .img-upload-area {
       border: 2px dashed var(--border);
       border-radius: var(--radius-sm);
@@ -791,6 +790,7 @@
       margin-top: 10px
     }
 
+    /* TOKEN SUCCESS BOX */
     .token-box {
       background: #fffbeb;
       border: 2px solid #f59e0b;
@@ -841,6 +841,7 @@
       font-style: italic
     }
 
+    /* DETAIL VIEW */
     .detail-img {
       width: 100%;
       height: 260px;
@@ -931,6 +932,7 @@
       margin: 3px 0
     }
 
+    /* TOKEN INPUT AREA (for resolve/delete) */
     .token-input-section {
       margin-top: 20px;
       padding-top: 20px;
@@ -953,150 +955,10 @@
     .token-actions {
       display: flex;
       gap: 10px;
-      margin-top: 10px;
-      flex-wrap: wrap
+      margin-top: 10px
     }
 
-    /* ADMIN PANEL */
-    .admin-bar {
-      background: var(--admin);
-      color: #fff;
-      padding: 10px 32px;
-      font-size: .85rem;
-      display: flex;
-      align-items: center;
-      gap: 12px
-    }
-
-    .admin-bar strong {
-      font-family: 'Syne', sans-serif
-    }
-
-    .admin-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: .88rem
-    }
-
-    .admin-table th {
-      background: var(--text);
-      color: #fff;
-      padding: 10px 12px;
-      text-align: left;
-      font-weight: 600;
-      font-size: .8rem;
-      text-transform: uppercase;
-      letter-spacing: .5px
-    }
-
-    .admin-table td {
-      padding: 10px 12px;
-      border-bottom: 1px solid var(--border);
-      vertical-align: middle
-    }
-
-    .admin-table tr:hover td {
-      background: var(--surface2)
-    }
-
-    .admin-table tr.resolved td {
-      opacity: .6
-    }
-
-    .admin-filters {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 16px;
-      flex-wrap: wrap
-    }
-
-    .admin-stat-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-      gap: 12px;
-      margin-bottom: 20px
-    }
-
-    .admin-stat-box {
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      padding: 14px;
-      text-align: center
-    }
-
-    .admin-stat-num {
-      font-family: 'Syne', sans-serif;
-      font-size: 1.8rem;
-      font-weight: 800
-    }
-
-    .admin-stat-label {
-      font-size: .75rem;
-      color: var(--text2);
-      text-transform: uppercase;
-      letter-spacing: .4px;
-      margin-top: 2px
-    }
-
-    .admin-login {
-      max-width: 380px;
-      margin: 60px auto;
-      background: var(--surface);
-      border-radius: var(--radius);
-      padding: 32px;
-      box-shadow: var(--shadow-lg)
-    }
-
-    .admin-login h2 {
-      font-family: 'Syne', sans-serif;
-      font-size: 1.4rem;
-      font-weight: 800;
-      margin-bottom: 4px
-    }
-
-    .admin-login p {
-      font-size: .88rem;
-      color: var(--text2);
-      margin-bottom: 20px
-    }
-
-    .audit-row {
-      font-size: .82rem;
-      color: var(--text2)
-    }
-
-    .audit-action {
-      display: inline-block;
-      padding: 2px 8px;
-      border-radius: 12px;
-      font-size: .72rem;
-      font-weight: 600;
-      text-transform: uppercase
-    }
-
-    .audit-CREATE {
-      background: var(--found-bg);
-      color: var(--found)
-    }
-
-    .audit-DELETE,
-    .audit-ADMIN_DELETE {
-      background: var(--lost-bg);
-      color: var(--lost)
-    }
-
-    .audit-RESOLVE,
-    .audit-ADMIN_RESOLVE {
-      background: #e0f2fe;
-      color: #0369a1
-    }
-
-    .audit-ADMIN_REOPEN {
-      background: #f3e8ff;
-      color: #7c3aed
-    }
-
+    /* EMPTY */
     .empty-state {
       text-align: center;
       padding: 80px 20px;
@@ -1115,6 +977,7 @@
       margin-bottom: 8px
     }
 
+    /* TOAST */
     .toast {
       position: fixed;
       bottom: 24px;
@@ -1191,10 +1054,6 @@
       .token-actions {
         flex-direction: column
       }
-
-      .nav-actions .btn-ghost {
-        display: none
-      }
     }
   </style>
 </head>
@@ -1244,26 +1103,39 @@
       );
     }
 
-    // ── Token Success Modal ──
+    // ── Token Success Screen (shown once after posting) ──
     function TokenSuccessModal({ item, onClose }) {
       useEffect(() => { document.body.classList.add('modal-open'); return () => document.body.classList.remove('modal-open'); }, []);
       const [copied, setCopied] = useState(false);
-      const copy = () => { navigator.clipboard.writeText(item.edit_token); setCopied(true); setTimeout(() => setCopied(false), 2000); };
+      const copy = () => {
+        navigator.clipboard.writeText(item.edit_token);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      };
       return (
         <div className="modal-overlay">
           <div className="modal">
-            <div className="modal-header"><h2>🎉 Item Posted!</h2><button className="close-btn" onClick={onClose}>✕</button></div>
+            <div className="modal-header">
+              <h2>🎉 Item Posted!</h2>
+              <button className="close-btn" onClick={onClose}>✕</button>
+            </div>
             <div className="modal-body">
               <div className="token-box">
                 <h3>⚠️ Save Your Edit Token</h3>
                 <p>This token lets you <strong>mark your item as resolved</strong> or <strong>delete it</strong> later. It will <strong>never be shown again</strong> — copy it now!</p>
-                <div className="token-code" onClick={copy} title="Click to copy">{item.edit_token}</div>
-                <div className="token-hint">{copied ? '✓ Copied to clipboard!' : '👆 Click the token to copy it'}</div>
+                <div className="token-code" onClick={copy} title="Click to copy">
+                  {item.edit_token}
+                </div>
+                <div className="token-hint">
+                  {copied ? '✓ Copied to clipboard!' : '👆 Click the token to copy it'}
+                </div>
               </div>
               <div style={{ background: 'var(--found-bg)', borderRadius: 'var(--radius-sm)', padding: '14px', fontSize: '.88rem', color: 'var(--found)', lineHeight: 1.5 }}>
                 <strong>Your item "{item.title}"</strong> is now live. Anyone who finds a match can contact you at <strong>{item.contact_email}</strong>.
               </div>
-              <button className="btn btn-found btn-lg" style={{ width: '100%', marginTop: 16 }} onClick={onClose}>View All Listings</button>
+              <button className="btn btn-found btn-lg" style={{ width: '100%', marginTop: 16 }} onClick={onClose}>
+                View All Listings
+              </button>
             </div>
           </div>
         </div>
@@ -1279,20 +1151,12 @@
       const [matches, setMatches] = useState([]);
       const [matchLoading, setMatchLoading] = useState(true);
 
-      // Fetch full item details (unmasked contact)
-      const [fullItem, setFullItem] = useState(item);
+      // Fetch match suggestions: opposite type, same category
       useEffect(() => {
-        fetch(`${API}/items/${item.id}`)
+        const oppositeType = item.type === 'lost' ? 'found' : 'lost';
+        fetch(`${API}/items?type=${oppositeType}&category=${encodeURIComponent(item.category)}&status=active`)
           .then(r => r.json())
-          .then(d => setFullItem(d))
-          .catch(() => { });
-      }, [item.id]);
-
-      useEffect(() => {
-        const opp = item.type === 'lost' ? 'found' : 'lost';
-        fetch(`${API}/items?type=${opp}&category=${encodeURIComponent(item.category)}&status=active`)
-          .then(r => r.json())
-          .then(data => setMatches((data.items || data).filter(m => m.id !== item.id).slice(0, 6)))
+          .then(data => { setMatches(data.filter(m => m.id !== item.id).slice(0, 6)); })
           .catch(() => { })
           .finally(() => setMatchLoading(false));
       }, [item.id]);
@@ -1306,7 +1170,6 @@
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ edit_token: token.trim() })
           });
-          if (res.status === 429) { showToast('Too many attempts. Wait 60 seconds.', 'error'); return; }
           if (res.status === 403) { showToast('❌ Invalid token — only the poster can do this', 'error'); return; }
           if (!res.ok) { showToast('Something went wrong', 'error'); return; }
           if (action === 'resolve') onResolve();
@@ -1315,16 +1178,13 @@
         finally { setActionLoading(''); }
       };
 
-      // FIX: WhatsApp direct chat — wa.me/<number> with NO text param opens direct chat
+      // Format phone for WhatsApp (strip spaces, dashes; add country code if missing)
       const waPhone = (phone) => {
         let p = phone.replace(/[^0-9+]/g, '');
         if (p.startsWith('0')) p = '91' + p.slice(1);
         if (!p.startsWith('+') && !p.startsWith('91')) p = '91' + p;
         return p.replace('+', '');
       };
-
-      const phone = fullItem.contact_phone;
-      const email = fullItem.contact_email;
 
       return (
         <div className="modal-overlay" onClick={e => e.target === e.currentTarget && onClose()}>
@@ -1337,52 +1197,50 @@
             </div>
             <div className="modal-body">
               <div className="detail-img">
-                {fullItem.image_base64 ? <img src={fullItem.image_base64} alt={fullItem.title} /> : <span>{icon}</span>}
+                {item.image_base64 ? <img src={item.image_base64} alt={item.title} /> : <span>{icon}</span>}
               </div>
-              <div className="detail-title">{fullItem.title}</div>
-              <p className="detail-desc">{fullItem.description}</p>
+              <div className="detail-title">{item.title}</div>
+              <p className="detail-desc">{item.description}</p>
               <div className="info-grid">
-                <div className="info-box"><div className="info-box-label">Category</div><div className="info-box-val">{icon} {fullItem.category}</div></div>
-                <div className="info-box"><div className="info-box-label">Location</div><div className="info-box-val">📍 {fullItem.location}</div></div>
-                <div className="info-box"><div className="info-box-label">Date {item.type === 'lost' ? 'Lost' : 'Found'}</div><div className="info-box-val">📅 {formatDate(fullItem.date_occurred)}</div></div>
-                <div className="info-box"><div className="info-box-label">Posted</div><div className="info-box-val">{timeAgo(fullItem.created_at)}</div></div>
+                <div className="info-box"><div className="info-box-label">Category</div><div className="info-box-val">{icon} {item.category}</div></div>
+                <div className="info-box"><div className="info-box-label">Location</div><div className="info-box-val">📍 {item.location}</div></div>
+                <div className="info-box"><div className="info-box-label">Date {item.type === 'lost' ? 'Lost' : 'Found'}</div><div className="info-box-val">📅 {formatDate(item.date_occurred)}</div></div>
+                <div className="info-box"><div className="info-box-label">Posted</div><div className="info-box-val">{timeAgo(item.created_at)}</div></div>
               </div>
 
               <div className="contact-box">
                 <h3>Contact Poster</h3>
-                <div className="contact-name">{fullItem.contact_name}</div>
-                <div className="contact-detail">✉ {email}</div>
-                {phone && <div className="contact-detail">📞 {phone}</div>}
-                <div className="masked-notice" style={{ color: 'rgba(255,255,255,.5)' }}>Tap a button below to contact directly</div>
+                <div className="contact-name">{item.contact_name}</div>
+                <div className="contact-detail">✉ {item.contact_email}</div>
+                {item.contact_phone && <div className="contact-detail">📞 {item.contact_phone}</div>}
+                <div className="masked-notice">⚠ Contact details are partially hidden in listings for privacy. Full details shown here after you click.</div>
                 <div className="contact-actions">
-                  <a href={`mailto:${email}?subject=Regarding your ${item.type} item: ${fullItem.title}`}
+                  <a
+                    href={`mailto:${item.contact_email}?subject=Regarding your ${item.type} item: ${item.title}`}
                     className="btn btn-sm btn-outline"
-                    style={{ color: '#fff', borderColor: 'rgba(255,255,255,0.3)', textDecoration: 'none' }}>
-                    ✉ Email
-                  </a>
-                  {phone && <>
-                    {/* Direct WhatsApp chat — no text= param so it opens chat directly */}
-                    <a href={`https://wa.me/${waPhone(phone)}`}
-                      target="_blank" rel="noreferrer"
+                    style={{ color: '#fff', borderColor: 'rgba(255,255,255,0.3)', textDecoration: 'none' }}
+                  >✉ Email</a>
+                  {item.contact_phone && <>
+                    <a
+                      href={`https://wa.me/${waPhone(item.contact_phone)}?text=Hi, I saw your ${item.type} item listing "${item.title}" on FindBack. I think I can help!`}
+                      target="_blank"
+                      rel="noreferrer"
                       className="btn btn-sm btn-whatsapp"
-                      style={{ textDecoration: 'none' }}>
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" /></svg>
+                      style={{ textDecoration: 'none' }}
+                    >
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" /></svg>
                       WhatsApp
                     </a>
-                    <a href={`sms:${phone}`}
+                    <a
+                      href={`sms:${item.contact_phone}?body=Hi, I saw your ${item.type} item listing "${item.title}" on FindBack. I think I can help!`}
                       className="btn btn-sm btn-sms"
-                      style={{ textDecoration: 'none' }}>
-                      💬 SMS
-                    </a>
-                    <a href={`tel:${phone}`}
-                      className="btn btn-sm btn-found"
-                      style={{ textDecoration: 'none' }}>
-                      📞 Call
-                    </a>
+                      style={{ textDecoration: 'none' }}
+                    >💬 SMS</a>
                   </>}
                 </div>
               </div>
 
+              {/* ── Match Suggestions ── */}
               <div className="matches-section">
                 <div className="matches-title">
                   🔍 Possible Matches
@@ -1398,7 +1256,9 @@
                       const mIcon = CATEGORY_ICONS[m.category] || '📦';
                       return (
                         <div key={m.id} className="match-card" onClick={() => { onClose(); setTimeout(() => document.dispatchEvent(new CustomEvent('openItem', { detail: m })), 100); }}>
-                          <div className="match-card-img">{m.image_base64 ? <img src={m.image_base64} alt={m.title} /> : <span>{mIcon}</span>}</div>
+                          <div className="match-card-img">
+                            {m.image_base64 ? <img src={m.image_base64} alt={m.title} /> : <span>{mIcon}</span>}
+                          </div>
                           <div className="match-card-body">
                             <div className="match-card-title">{m.title}</div>
                             <div className="match-card-loc">📍 {m.location}</div>
@@ -1414,13 +1274,26 @@
                 <div className="token-input-section">
                   <h4>🔑 Are you the poster?</h4>
                   <p>Enter your edit token to manage this listing.</p>
-                  <input className="form-input" placeholder="Paste your edit token here..." value={token} onChange={e => setToken(e.target.value)} />
+                  <input
+                    className="form-input"
+                    placeholder="Paste your edit token here..."
+                    value={token}
+                    onChange={e => setToken(e.target.value)}
+                  />
                   <div className="token-actions">
-                    <button className="btn btn-found" disabled={actionLoading === 'resolve'} onClick={() => handleAction('resolve')}>
-                      {actionLoading === 'resolve' ? 'Saving...' : '✓ Mark as Resolved'}
+                    <button
+                      className="btn btn-found"
+                      disabled={actionLoading === 'resolve'}
+                      onClick={() => handleAction('resolve')}
+                    >
+                      {actionLoading === 'resolve' ? 'Saving...' : '✓ Mark as Resolved / Returned'}
                     </button>
-                    <button className="btn btn-danger btn-sm" disabled={actionLoading === 'delete'} onClick={() => handleAction('delete')}>
-                      {actionLoading === 'delete' ? 'Deleting...' : '🗑 Delete'}
+                    <button
+                      className="btn btn-danger btn-sm"
+                      disabled={actionLoading === 'delete'}
+                      onClick={() => handleAction('delete')}
+                    >
+                      {actionLoading === 'delete' ? 'Deleting...' : '🗑 Delete Listing'}
                     </button>
                   </div>
                 </div>
@@ -1443,12 +1316,14 @@
       const [loading, setLoading] = useState(false);
       const [imgPreview, setImgPreview] = useState('');
       const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
+
       const handleImg = e => {
         const file = e.target.files[0]; if (!file) return;
         const r = new FileReader();
         r.onload = ev => { setImgPreview(ev.target.result); set('image_base64', ev.target.result); };
         r.readAsDataURL(file);
       };
+
       const submit = async () => {
         if (!form.title || !form.description || !form.location || !form.contact_name || !form.contact_email) {
           alert('Please fill in all required fields.'); return;
@@ -1457,265 +1332,85 @@
         try {
           const res = await fetch(`${API}/items`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) });
           if (!res.ok) throw new Error();
-          onSuccess(await res.json());
+          const data = await res.json();
+          onSuccess(data);  // passes full response including edit_token
         } catch { alert('Could not post item. Make sure the backend is running.'); }
         finally { setLoading(false); }
       };
+
       return (
         <div className="modal-overlay" onClick={e => e.target === e.currentTarget && onClose()}>
           <div className="modal">
-            <div className="modal-header"><h2>Post an Item</h2><button className="close-btn" onClick={onClose}>✕</button></div>
+            <div className="modal-header">
+              <h2>Post an Item</h2>
+              <button className="close-btn" onClick={onClose}>✕</button>
+            </div>
             <div className="modal-body">
               <p style={{ color: 'var(--text2)', fontSize: '.88rem', marginBottom: 18 }}>Are you posting about a lost or found item?</p>
               <div className="type-toggle">
                 <button className={`type-btn ${form.type === 'lost' ? 'lost-active' : ''}`} onClick={() => set('type', 'lost')}>⚠ I Lost Something</button>
                 <button className={`type-btn ${form.type === 'found' ? 'found-active' : ''}`} onClick={() => set('type', 'found')}>✓ I Found Something</button>
               </div>
-              <div className="form-group"><label className="form-label">Title <span>*</span></label><input className="form-input" placeholder="e.g. Black leather wallet with ID cards" value={form.title} onChange={e => set('title', e.target.value)} /></div>
-              <div className="form-group"><label className="form-label">Description <span>*</span></label><textarea className="form-textarea" placeholder="Describe the item — colour, brand, distinguishing features..." value={form.description} onChange={e => set('description', e.target.value)} /></div>
-              <div className="form-row">
-                <div className="form-group"><label className="form-label">Category <span>*</span></label><select className="form-select" value={form.category} onChange={e => set('category', e.target.value)}>{categories.map(c => <option key={c}>{c}</option>)}</select></div>
-                <div className="form-group"><label className="form-label">Date {form.type === 'lost' ? 'Lost' : 'Found'} <span>*</span></label><input type="date" className="form-input" value={form.date_occurred} onChange={e => set('date_occurred', e.target.value)} /></div>
+
+              <div className="form-group">
+                <label className="form-label">Title <span>*</span></label>
+                <input className="form-input" placeholder="e.g. Black leather wallet with ID cards" value={form.title} onChange={e => set('title', e.target.value)} />
               </div>
-              <div className="form-group"><label className="form-label">Location <span>*</span></label><input className="form-input" placeholder="e.g. Chennai Central Railway Station" value={form.location} onChange={e => set('location', e.target.value)} /></div>
+              <div className="form-group">
+                <label className="form-label">Description <span>*</span></label>
+                <textarea className="form-textarea" placeholder="Describe the item — colour, brand, any distinguishing features..." value={form.description} onChange={e => set('description', e.target.value)} />
+              </div>
+              <div className="form-row">
+                <div className="form-group">
+                  <label className="form-label">Category <span>*</span></label>
+                  <select className="form-select" value={form.category} onChange={e => set('category', e.target.value)}>
+                    {categories.map(c => <option key={c}>{c}</option>)}
+                  </select>
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Date {form.type === 'lost' ? 'Lost' : 'Found'} <span>*</span></label>
+                  <input type="date" className="form-input" value={form.date_occurred} onChange={e => set('date_occurred', e.target.value)} />
+                </div>
+              </div>
+              <div className="form-group">
+                <label className="form-label">Location <span>*</span></label>
+                <input className="form-input" placeholder="e.g. Chennai Central Railway Station" value={form.location} onChange={e => set('location', e.target.value)} />
+              </div>
               <div className="form-group">
                 <label className="form-label">Photo</label>
                 <div className="img-upload-area">
                   <input type="file" accept="image/*" onChange={handleImg} />
-                  {imgPreview ? <img src={imgPreview} className="img-preview" /> : <><p>📷 Click to upload a photo</p><p style={{ fontSize: '.78rem', marginTop: 4 }}>PNG, JPG up to 2MB</p></>}
+                  {imgPreview ? <img src={imgPreview} className="img-preview" /> : <><p>📷 Click to upload a photo</p><p style={{ fontSize: '.78rem', marginTop: 4 }}>PNG, JPG up to 5MB</p></>}
                 </div>
               </div>
+
               <div style={{ borderTop: '1px solid var(--border)', paddingTop: 18, marginTop: 4 }}>
                 <p style={{ fontFamily: 'Syne,sans-serif', fontWeight: 700, marginBottom: 14 }}>Your Contact Info</p>
                 <div className="form-row">
-                  <div className="form-group"><label className="form-label">Name <span>*</span></label><input className="form-input" placeholder="Your name" value={form.contact_name} onChange={e => set('contact_name', e.target.value)} /></div>
-                  <div className="form-group"><label className="form-label">Email <span>*</span></label><input type="email" className="form-input" placeholder="you@email.com" value={form.contact_email} onChange={e => set('contact_email', e.target.value)} /></div>
+                  <div className="form-group">
+                    <label className="form-label">Name <span>*</span></label>
+                    <input className="form-input" placeholder="Your name" value={form.contact_name} onChange={e => set('contact_name', e.target.value)} />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Email <span>*</span></label>
+                    <input type="email" className="form-input" placeholder="you@email.com" value={form.contact_email} onChange={e => set('contact_email', e.target.value)} />
+                  </div>
                 </div>
-                <div className="form-group"><label className="form-label">Phone (optional — for WhatsApp/SMS/Call)</label><input className="form-input" placeholder="+91 98765 43210" value={form.contact_phone} onChange={e => set('contact_phone', e.target.value)} /></div>
+                <div className="form-group">
+                  <label className="form-label">Phone (optional)</label>
+                  <input className="form-input" placeholder="+91 98765 43210" value={form.contact_phone} onChange={e => set('contact_phone', e.target.value)} />
+                </div>
               </div>
-              <button className={`btn btn-lg ${form.type === 'lost' ? 'btn-primary' : 'btn-found'}`} style={{ width: '100%', marginTop: 8 }} onClick={submit} disabled={loading}>
+
+              <button
+                className={`btn btn-lg ${form.type === 'lost' ? 'btn-primary' : 'btn-found'}`}
+                style={{ width: '100%', marginTop: 8 }}
+                onClick={submit} disabled={loading}
+              >
                 {loading ? 'Posting...' : `Post ${form.type === 'lost' ? 'Lost' : 'Found'} Item`}
               </button>
             </div>
           </div>
-        </div>
-      );
-    }
-
-    // ── Admin Login ──
-    function AdminLogin({ onLogin }) {
-      const [secret, setSecret] = useState('');
-      const [err, setErr] = useState('');
-      const attempt = async () => {
-        if (!secret.trim()) { setErr('Please enter the admin secret.'); return; }
-        // Test the secret against the backend
-        const res = await fetch(`${API}/admin/stats`, { headers: { 'X-Admin-Secret': secret } });
-        if (res.ok) { onLogin(secret); }
-        else { setErr('Invalid secret. Access denied.'); }
-      };
-      return (
-        <div className="admin-login">
-          <h2>🔐 Admin Login</h2>
-          <p>Enter the admin secret to access the panel.</p>
-          <div className="form-group">
-            <label className="form-label">Admin Secret</label>
-            <input className="form-input" type="password" placeholder="Enter admin secret..." value={secret} onChange={e => { setSecret(e.target.value); setErr(''); }} onKeyDown={e => e.key === 'Enter' && attempt()} />
-            {err && <div style={{ color: 'var(--lost)', fontSize: '.82rem', marginTop: 6 }}>{err}</div>}
-          </div>
-          <button className="btn btn-admin" style={{ width: '100%' }} onClick={attempt}>Login →</button>
-        </div>
-      );
-    }
-
-    // ── Admin Panel ──
-    function AdminPanel({ secret, onClose }) {
-      useEffect(() => { document.body.classList.add('modal-open'); return () => document.body.classList.remove('modal-open'); }, []);
-      const [view, setView] = useState('items'); // 'items' | 'audit'
-      const [items, setItems] = useState([]);
-      const [stats, setStats] = useState({});
-      const [auditLog, setAuditLog] = useState([]);
-      const [loading, setLoading] = useState(true);
-      const [filterStatus, setFilterStatus] = useState('');
-      const [filterType, setFilterType] = useState('');
-      const [search, setSearch] = useState('');
-      const [pagination, setPagination] = useState({ total: 0, page: 1, pages: 1 });
-      const [toast, setToast] = useState(null);
-      const showToast = (msg, type = 'success') => setToast({ msg, type });
-
-      const headers = { 'X-Admin-Secret': secret, 'Content-Type': 'application/json' };
-
-      const fetchItems = async (pg = 1) => {
-        setLoading(true);
-        try {
-          const p = new URLSearchParams({ page: pg, limit: 30 });
-          if (filterStatus) p.set('status', filterStatus);
-          if (filterType) p.set('type', filterType);
-          if (search) p.set('q', search);
-          const [ir, sr] = await Promise.all([
-            fetch(`${API}/admin/items?${p}`, { headers }),
-            fetch(`${API}/admin/stats`, { headers })
-          ]);
-          const id = await ir.json();
-          setItems(id.items || []);
-          setPagination({ total: id.total, page: id.page, pages: id.pages });
-          setStats(await sr.json());
-        } catch { showToast('Failed to load data', 'error'); }
-        finally { setLoading(false); }
-      };
-
-      const fetchAudit = async () => {
-        setLoading(true);
-        try {
-          const res = await fetch(`${API}/admin/audit?limit=200`, { headers });
-          setAuditLog(await res.json());
-        } catch { showToast('Failed to load audit log', 'error'); }
-        finally { setLoading(false); }
-      };
-
-      useEffect(() => { if (view === 'items') fetchItems(); else fetchAudit(); }, [view, filterStatus, filterType]);
-
-      const adminAction = async (action, itemId, itemTitle) => {
-        const confirmMsg = action === 'delete'
-          ? `Delete "${itemTitle}"? This cannot be undone.`
-          : action === 'resolve'
-            ? `Mark "${itemTitle}" as resolved?`
-            : `Reopen "${itemTitle}"?`;
-        if (!window.confirm(confirmMsg)) return;
-        const [method, url] = action === 'delete'
-          ? ['DELETE', `${API}/admin/items/${itemId}`]
-          : ['PATCH', `${API}/admin/items/${itemId}/${action}`];
-        try {
-          const res = await fetch(url, { method, headers });
-          if (!res.ok) throw new Error();
-          showToast(`Done! Item ${action}d.`);
-          fetchItems(pagination.page);
-        } catch { showToast('Action failed', 'error'); }
-      };
-
-      return (
-        <div className="modal-overlay" onClick={e => e.target === e.currentTarget && onClose()}>
-          <div className="modal modal-wide">
-            <div className="modal-header" style={{ borderBottom: '1px solid var(--border)' }}>
-              <h2>🛡 Admin Panel</h2>
-              <button className="close-btn" onClick={onClose}>✕</button>
-            </div>
-            <div className="modal-body">
-
-              {/* Stats */}
-              <div className="admin-stat-grid">
-                {[
-                  { label: 'Total', val: stats.total_listings ?? '—', color: DARK },
-                  { label: 'Active Lost', val: stats.active_lost ?? '—', color: 'var(--lost)' },
-                  { label: 'Active Found', val: stats.active_found ?? '—', color: 'var(--found)' },
-                  { label: 'Resolved', val: stats.resolved ?? '—', color: '#0369a1' },
-                  { label: 'Audit Entries', val: stats.audit_entries ?? '—', color: 'var(--admin)' },
-                ].map(s => (
-                  <div className="admin-stat-box" key={s.label}>
-                    <div className="admin-stat-num" style={{ color: s.color }}>{s.val}</div>
-                    <div className="admin-stat-label">{s.label}</div>
-                  </div>
-                ))}
-              </div>
-
-              {/* View tabs */}
-              <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
-                <button className={`btn btn-sm ${view === 'items' ? 'btn-admin' : 'btn-outline'}`} onClick={() => setView('items')}>📋 Listings</button>
-                <button className={`btn btn-sm ${view === 'audit' ? 'btn-admin' : 'btn-outline'}`} onClick={() => setView('audit')}>📜 Audit Log</button>
-              </div>
-
-              {view === 'items' && <>
-                {/* Filters */}
-                <div className="admin-filters">
-                  <select className="filter-select" value={filterStatus} onChange={e => setFilterStatus(e.target.value)}>
-                    <option value="">All Status</option>
-                    <option value="active">Active</option>
-                    <option value="resolved">Resolved</option>
-                  </select>
-                  <select className="filter-select" value={filterType} onChange={e => setFilterType(e.target.value)}>
-                    <option value="">All Types</option>
-                    <option value="lost">Lost</option>
-                    <option value="found">Found</option>
-                  </select>
-                  <input className="form-input" style={{ maxWidth: 220 }} placeholder="Search..." value={search} onChange={e => setSearch(e.target.value)} onKeyDown={e => e.key === 'Enter' && fetchItems()} />
-                  <button className="btn btn-sm btn-outline" onClick={() => fetchItems()}>Search</button>
-                </div>
-
-                {loading ? <div className="spinner" /> : (
-                  <>
-                    <div style={{ overflowX: 'auto' }}>
-                      <table className="admin-table">
-                        <thead><tr>
-                          <th>Type</th><th>Title</th><th>Category</th><th>Location</th>
-                          <th>Contact</th><th>Status</th><th>Posted</th><th>Actions</th>
-                        </tr></thead>
-                        <tbody>
-                          {items.length === 0 ? (
-                            <tr><td colSpan="8" style={{ textAlign: 'center', padding: 32, color: 'var(--text3)' }}>No items found</td></tr>
-                          ) : items.map(item => (
-                            <tr key={item.id} className={item.status === 'resolved' ? 'resolved' : ''}>
-                              <td><span className={`card-badge badge-${item.status === 'resolved' ? 'resolved' : item.type}`} style={{ whiteSpace: 'nowrap' }}>{item.type === 'lost' ? '⚠ Lost' : '✓ Found'}</span></td>
-                              <td style={{ maxWidth: 180, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontWeight: 600 }}>{item.title}</td>
-                              <td style={{ fontSize: '.8rem', color: 'var(--text2)' }}>{item.category}</td>
-                              <td style={{ fontSize: '.8rem', color: 'var(--text2)' }}>{item.location}</td>
-                              <td style={{ fontSize: '.8rem' }}>
-                                <div>{item.contact_name}</div>
-                                <div style={{ color: 'var(--text3)' }}>{item.contact_email}</div>
-                                {item.contact_phone && <div style={{ color: 'var(--text3)' }}>{item.contact_phone}</div>}
-                              </td>
-                              <td><span className={`card-badge badge-${item.status === 'resolved' ? 'resolved' : item.type}`}>{item.status}</span></td>
-                              <td style={{ fontSize: '.8rem', color: 'var(--text3)', whiteSpace: 'nowrap' }}>{timeAgo(item.created_at)}</td>
-                              <td>
-                                <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-                                  {item.status === 'active' ? (
-                                    <button className="btn btn-sm btn-found" onClick={() => adminAction('resolve', item.id, item.title)}>✓ Resolve</button>
-                                  ) : (
-                                    <button className="btn btn-sm btn-warning" onClick={() => adminAction('reopen', item.id, item.title)}>↩ Reopen</button>
-                                  )}
-                                  <button className="btn btn-sm btn-danger" onClick={() => adminAction('delete', item.id, item.title)}>🗑</button>
-                                </div>
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                    {pagination.pages > 1 && (
-                      <div style={{ display: 'flex', justifyContent: 'center', gap: 12, marginTop: 16 }}>
-                        <button className="btn btn-outline btn-sm" disabled={pagination.page <= 1} onClick={() => fetchItems(pagination.page - 1)}>← Prev</button>
-                        <span style={{ color: 'var(--text2)', fontSize: '.9rem', alignSelf: 'center' }}>Page {pagination.page} of {pagination.pages}</span>
-                        <button className="btn btn-outline btn-sm" disabled={pagination.page >= pagination.pages} onClick={() => fetchItems(pagination.page + 1)}>Next →</button>
-                      </div>
-                    )}
-                  </>
-                )}
-              </>}
-
-              {view === 'audit' && <>
-                {loading ? <div className="spinner" /> : (
-                  <div style={{ overflowX: 'auto' }}>
-                    <table className="admin-table">
-                      <thead><tr><th>Action</th><th>Item ID</th><th>IP Address</th><th>Detail</th><th>Time</th></tr></thead>
-                      <tbody>
-                        {auditLog.length === 0 ? (
-                          <tr><td colSpan="5" style={{ textAlign: 'center', padding: 32, color: 'var(--text3)' }}>No audit entries</td></tr>
-                        ) : auditLog.map(entry => (
-                          <tr key={entry.id} className="audit-row">
-                            <td><span className={`audit-action audit-${entry.action}`}>{entry.action}</span></td>
-                            <td style={{ fontFamily: 'monospace', fontSize: '.75rem', color: 'var(--text3)' }}>{entry.item_id?.slice(0, 8)}...</td>
-                            <td style={{ fontFamily: 'monospace', fontSize: '.8rem' }}>{entry.ip_address}</td>
-                            <td style={{ maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{entry.detail || '—'}</td>
-                            <td style={{ whiteSpace: 'nowrap' }}>{new Date(entry.ts).toLocaleString('en-IN')}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                )}
-              </>}
-
-            </div>
-          </div>
-          {toast && <Toast msg={toast.msg} type={toast.type} onDone={() => setToast(null)} />}
         </div>
       );
     }
@@ -1734,16 +1429,15 @@
       const [showPost, setShowPost] = useState(false);
       const [postType, setPostType] = useState('lost');
       const [selected, setSelected] = useState(null);
-      const [tokenResult, setTokenResult] = useState(null);
-      const [toast, setToast] = useState(null);
-      const [showAdmin, setShowAdmin] = useState(false);
-      const [adminSecret, setAdminSecret] = useState('');
 
+      // Listen for openItem events dispatched by match cards
       useEffect(() => {
         const handler = (e) => setSelected(e.detail);
         document.addEventListener('openItem', handler);
         return () => document.removeEventListener('openItem', handler);
       }, []);
+      const [tokenResult, setTokenResult] = useState(null); // item with edit_token shown after post
+      const [toast, setToast] = useState(null);
 
       const showToast = (msg, type = 'success') => setToast({ msg, type });
 
@@ -1755,7 +1449,8 @@
           if (filterCat) p.set('category', filterCat);
           if (filterLoc) p.set('location', filterLoc);
           if (search) p.set('q', search);
-          p.set('page', pg); p.set('limit', 20);
+          p.set('page', pg);
+          p.set('limit', 20);
           const [ir, sr, cr] = await Promise.all([
             fetch(`${API}/items?${p}`), fetch(`${API}/stats`), fetch(`${API}/categories`)
           ]);
@@ -1770,14 +1465,33 @@
 
       useEffect(() => { fetchAll(); }, [activeTab, filterCat, filterLoc]);
 
+      const openPost = (type) => { setPostType(type); setShowPost(true); };
+
+      const handlePostSuccess = (data) => {
+        setShowPost(false);
+        setTokenResult(data);   // show the token modal
+        fetchAll();
+      };
+
+      const handleResolve = () => {
+        showToast('Item marked as resolved! 🎉');
+        setSelected(null);
+        fetchAll();
+      };
+
+      const handleDelete = () => {
+        showToast('Listing deleted.', 'warning');
+        setSelected(null);
+        fetchAll();
+      };
+
       return (
         <>
           <nav>
             <div className="logo">Find<span>Back</span></div>
             <div className="nav-actions">
-              <button className="btn btn-ghost" onClick={() => { setPostType('lost'); setShowPost(true); }}>⚠ I Lost Something</button>
-              <button className="btn btn-primary" onClick={() => { setPostType('found'); setShowPost(true); }}>+ I Found Something</button>
-              <button className="btn btn-admin btn-sm" onClick={() => setShowAdmin(true)} title="Admin Panel">🛡 Admin</button>
+              <button className="btn btn-ghost" onClick={() => openPost('lost')}>⚠ I Lost Something</button>
+              <button className="btn btn-primary" onClick={() => openPost('found')}>+ I Found Something</button>
             </div>
           </nav>
 
@@ -1785,8 +1499,8 @@
             <h1>Reuniting People<br />with their <span>Lost Things</span></h1>
             <p>Post a lost or found item. Help your community recover what matters most.</p>
             <div className="hero-actions">
-              <button className="btn btn-primary btn-lg" onClick={() => { setPostType('lost'); setShowPost(true); }}>⚠ I Lost Something</button>
-              <button className="btn btn-found btn-lg" onClick={() => { setPostType('found'); setShowPost(true); }}>✓ I Found Something</button>
+              <button className="btn btn-primary btn-lg" onClick={() => openPost('lost')}>⚠ I Lost Something</button>
+              <button className="btn btn-found btn-lg" onClick={() => openPost('found')}>✓ I Found Something</button>
             </div>
           </div>
 
@@ -1822,11 +1536,13 @@
                 <div className="big-icon">🔍</div>
                 <h3>No items found</h3>
                 <p>Try adjusting your filters or be the first to post!</p>
-                <button className="btn btn-primary" style={{ marginTop: 16 }} onClick={() => { setPostType('lost'); setShowPost(true); }}>Post an Item</button>
+                <button className="btn btn-primary" style={{ marginTop: 16 }} onClick={() => openPost('lost')}>Post an Item</button>
               </div>
             ) : (
               <>
-                <div className="items-grid">{items.map(item => <ItemCard key={item.id} item={item} onClick={setSelected} />)}</div>
+                <div className="items-grid">
+                  {items.map(item => <ItemCard key={item.id} item={item} onClick={setSelected} />)}
+                </div>
                 {pagination.pages > 1 && (
                   <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 12, marginTop: 32 }}>
                     <button className="btn btn-outline btn-sm" disabled={pagination.page <= 1} onClick={() => fetchAll(pagination.page - 1)}>← Prev</button>
@@ -1838,23 +1554,30 @@
             )}
           </div>
 
-          {selected && <DetailModal item={selected} onClose={() => setSelected(null)}
-            onResolve={() => { showToast('Item marked as resolved! 🎉'); setSelected(null); fetchAll(); }}
-            onDelete={() => { showToast('Listing deleted.', 'warning'); setSelected(null); fetchAll(); }}
-            showToast={showToast} />}
+          {selected && (
+            <DetailModal
+              item={selected}
+              onClose={() => setSelected(null)}
+              onResolve={handleResolve}
+              onDelete={handleDelete}
+              showToast={showToast}
+            />
+          )}
 
-          {showPost && <PostModal defaultType={postType} categories={categories}
-            onClose={() => setShowPost(false)}
-            onSuccess={data => { setShowPost(false); setTokenResult(data); fetchAll(); }} />}
+          {showPost && (
+            <PostModal
+              defaultType={postType}
+              categories={categories}
+              onClose={() => setShowPost(false)}
+              onSuccess={handlePostSuccess}
+            />
+          )}
 
-          {tokenResult && <TokenSuccessModal item={tokenResult} onClose={() => setTokenResult(null)} />}
-
-          {showAdmin && (
-            adminSecret
-              ? <AdminPanel secret={adminSecret} onClose={() => setShowAdmin(false)} />
-              : <div className="modal-overlay" onClick={e => e.target === e.currentTarget && setShowAdmin(false)}>
-                <AdminLogin onLogin={s => { setAdminSecret(s); }} />
-              </div>
+          {tokenResult && (
+            <TokenSuccessModal
+              item={tokenResult}
+              onClose={() => setTokenResult(null)}
+            />
           )}
 
           {toast && <Toast msg={toast.msg} type={toast.type} onDone={() => setToast(null)} />}
