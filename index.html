@@ -1055,6 +1055,343 @@
         flex-direction: column
       }
     }
+
+    /* ── ADMIN STYLES ── */
+    .btn-admin {
+      background: #7c3aed;
+      color: #fff;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px
+    }
+    .btn-admin:hover { background: #6d28d9 }
+
+    .admin-panel {
+      position: fixed;
+      inset: 0;
+      background: #0f0d0b;
+      z-index: 300;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden
+    }
+
+    .admin-topbar {
+      background: #1a1714;
+      border-bottom: 1px solid #333;
+      padding: 0 28px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0
+    }
+
+    .admin-topbar-title {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.15rem;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 10px
+    }
+
+    .admin-topbar-title span {
+      background: #7c3aed;
+      color: #fff;
+      font-size: .65rem;
+      padding: 2px 8px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 600
+    }
+
+    .admin-toolbar {
+      background: #1a1714;
+      border-bottom: 1px solid #2a2520;
+      padding: 12px 28px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+      flex-shrink: 0
+    }
+
+    .admin-search {
+      flex: 1;
+      min-width: 160px;
+      padding: 8px 12px;
+      border: 1.5px solid #333;
+      border-radius: 8px;
+      background: #0f0d0b;
+      color: #fff;
+      font-family: 'DM Sans', sans-serif;
+      font-size: .88rem;
+      outline: none
+    }
+
+    .admin-search:focus { border-color: #7c3aed }
+
+    .admin-select {
+      padding: 8px 12px;
+      border: 1.5px solid #333;
+      border-radius: 8px;
+      background: #0f0d0b;
+      color: #fff;
+      font-family: 'DM Sans', sans-serif;
+      font-size: .85rem;
+      outline: none;
+      cursor: pointer
+    }
+
+    .admin-select:focus { border-color: #7c3aed }
+
+    .admin-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px 28px
+    }
+
+    .admin-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .85rem;
+      color: #d0ccc8
+    }
+
+    .admin-table th {
+      text-align: left;
+      padding: 10px 12px;
+      background: #1a1714;
+      border-bottom: 2px solid #333;
+      font-family: 'Syne', sans-serif;
+      font-size: .78rem;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      color: #888;
+      position: sticky;
+      top: 0;
+      z-index: 1
+    }
+
+    .admin-table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid #1f1c18;
+      vertical-align: middle
+    }
+
+    .admin-table tr:hover td {
+      background: #1a1714
+    }
+
+    .admin-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 20px;
+      font-size: .72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .5px
+    }
+
+    .admin-badge-lost { background: #3d1500; color: #ff7043 }
+    .admin-badge-found { background: #0a2e1a; color: #4caf82 }
+    .admin-badge-active { background: #1a2e4a; color: #5ba3f5 }
+    .admin-badge-resolved { background: #1f1c18; color: #888 }
+
+    .admin-actions { display: flex; gap: 6px; flex-wrap: wrap }
+
+    .admin-btn {
+      padding: 4px 10px;
+      border-radius: 6px;
+      border: none;
+      font-family: 'DM Sans', sans-serif;
+      font-size: .78rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all .15s;
+      white-space: nowrap
+    }
+
+    .admin-btn-resolve { background: #14532d; color: #4ade80 }
+    .admin-btn-resolve:hover { background: #166534 }
+    .admin-btn-reopen { background: #1e3a5f; color: #93c5fd }
+    .admin-btn-reopen:hover { background: #1e40af }
+    .admin-btn-delete { background: #450a0a; color: #f87171 }
+    .admin-btn-delete:hover { background: #7f1d1d }
+    .admin-btn:disabled { opacity: .45; cursor: not-allowed }
+
+    .admin-contact { font-size: .8rem; color: #a09a93; line-height: 1.5 }
+    .admin-contact strong { color: #d0ccc8 }
+
+    .admin-stats {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 16px;
+      flex-wrap: wrap
+    }
+
+    .admin-stat-card {
+      background: #1a1714;
+      border: 1px solid #2a2520;
+      border-radius: 10px;
+      padding: 12px 18px;
+      min-width: 120px
+    }
+
+    .admin-stat-card .num {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #fff
+    }
+
+    .admin-stat-card .lbl {
+      font-size: .75rem;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      margin-top: 2px
+    }
+
+    .admin-empty {
+      text-align: center;
+      padding: 60px 20px;
+      color: #555
+    }
+
+    .admin-pagination {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 16px;
+      justify-content: center
+    }
+
+    .admin-tab-row {
+      display: flex;
+      gap: 4px;
+      margin-right: auto
+    }
+
+    .admin-tab {
+      padding: 6px 14px;
+      border-radius: 6px;
+      border: 1.5px solid #333;
+      background: transparent;
+      color: #888;
+      font-family: 'DM Sans', sans-serif;
+      font-size: .82rem;
+      cursor: pointer;
+      transition: all .15s
+    }
+
+    .admin-tab.active {
+      background: #7c3aed;
+      border-color: #7c3aed;
+      color: #fff
+    }
+
+    .admin-tab:hover:not(.active) { border-color: #7c3aed; color: #c4b5fd }
+
+    .admin-login-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.7);
+      backdrop-filter: blur(6px);
+      z-index: 400;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px
+    }
+
+    .admin-login-box {
+      background: #1a1714;
+      border: 1px solid #333;
+      border-radius: 16px;
+      padding: 36px;
+      width: 100%;
+      max-width: 380px;
+      animation: slideUp .25s ease
+    }
+
+    .admin-login-box h2 {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.3rem;
+      color: #fff;
+      margin-bottom: 8px
+    }
+
+    .admin-login-box p {
+      font-size: .88rem;
+      color: #888;
+      margin-bottom: 24px
+    }
+
+    .admin-login-input {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1.5px solid #333;
+      border-radius: 8px;
+      background: #0f0d0b;
+      color: #fff;
+      font-family: 'DM Sans', sans-serif;
+      font-size: .95rem;
+      outline: none;
+      margin-bottom: 14px;
+      transition: border-color .15s
+    }
+
+    .admin-login-input:focus { border-color: #7c3aed }
+
+    .admin-log-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .82rem;
+      color: #d0ccc8
+    }
+
+    .admin-log-table th {
+      text-align: left;
+      padding: 8px 10px;
+      background: #1a1714;
+      border-bottom: 2px solid #333;
+      font-family: 'Syne', sans-serif;
+      font-size: .72rem;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      color: #888;
+      position: sticky;
+      top: 0
+    }
+
+    .admin-log-table td {
+      padding: 8px 10px;
+      border-bottom: 1px solid #1f1c18
+    }
+
+    .admin-log-table tr:hover td { background: #1a1714 }
+
+    .action-tag {
+      display: inline-block;
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-size: .72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .4px
+    }
+
+    .action-CREATE { background: #0a2e1a; color: #4caf82 }
+    .action-RESOLVE { background: #1a2e4a; color: #5ba3f5 }
+    .action-DELETE { background: #3d1500; color: #ff7043 }
+    .action-ADMIN_RESOLVE { background: #2e1a4a; color: #c084fc }
+    .action-ADMIN_REOPEN { background: #1a2e1a; color: #86efac }
+    .action-ADMIN_DELETE { background: #4a1a1a; color: #fca5a5 }
   </style>
 </head>
 
@@ -1415,6 +1752,335 @@
       );
     }
 
+    // ── Admin Login Modal ──
+    function AdminLoginModal({ onClose, onSuccess }) {
+      useEffect(() => { document.body.classList.add('modal-open'); return () => document.body.classList.remove('modal-open'); }, []);
+      const [token, setToken] = useState('');
+      const [loading, setLoading] = useState(false);
+      const [err, setErr] = useState('');
+
+      const login = async () => {
+        if (!token.trim()) { setErr('Please enter the admin token.'); return; }
+        setLoading(true); setErr('');
+        try {
+          const res = await fetch(`${API}/admin/verify`, {
+            method: 'POST',
+            headers: { 'x-admin-token': token.trim() }
+          });
+          if (res.ok) { onSuccess(token.trim()); }
+          else { setErr('Invalid admin token. Please try again.'); }
+        } catch { setErr('Could not connect to the server.'); }
+        finally { setLoading(false); }
+      };
+
+      return (
+        <div className="admin-login-modal" onClick={e => e.target === e.currentTarget && onClose()}>
+          <div className="admin-login-box">
+            <h2>🔐 Admin Login</h2>
+            <p>Enter your admin token to access the management panel.</p>
+            <input
+              className="admin-login-input"
+              type="password"
+              placeholder="Admin token..."
+              value={token}
+              onChange={e => setToken(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && login()}
+              autoFocus
+            />
+            {err && <div style={{ color: '#f87171', fontSize: '.83rem', marginBottom: 12 }}>{err}</div>}
+            <div style={{ display: 'flex', gap: 10 }}>
+              <button className="btn btn-admin btn-lg" style={{ flex: 1 }} onClick={login} disabled={loading}>
+                {loading ? 'Verifying...' : 'Enter Panel'}
+              </button>
+              <button className="btn btn-outline btn-lg" onClick={onClose}>Cancel</button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // ── Admin Panel ──
+    function AdminPanel({ adminToken, onClose, showToast }) {
+      useEffect(() => { document.body.classList.add('modal-open'); return () => document.body.classList.remove('modal-open'); }, []);
+      const [activeView, setActiveView] = useState('items');
+      const [items, setItems] = useState([]);
+      const [logs, setLogs] = useState([]);
+      const [loading, setLoading] = useState(true);
+      const [total, setTotal] = useState(0);
+      const [page, setPage] = useState(1);
+      const [pages, setPages] = useState(1);
+      const [logPage, setLogPage] = useState(1);
+      const [logPages, setLogPages] = useState(1);
+      const [logTotal, setLogTotal] = useState(0);
+      const [actionLoading, setActionLoading] = useState('');
+      const [filterType, setFilterType] = useState('');
+      const [filterStatus, setFilterStatus] = useState('');
+      const [search, setSearch] = useState('');
+      const [stats, setStats] = useState({});
+
+      const headers = { 'x-admin-token': adminToken };
+
+      const fetchItems = async (pg = 1) => {
+        setLoading(true);
+        try {
+          const p = new URLSearchParams({ page: pg, limit: 20 });
+          if (filterType) p.set('type', filterType);
+          if (filterStatus) p.set('status', filterStatus);
+          if (search) p.set('q', search);
+          const res = await fetch(`${API}/admin/items?${p}`, { headers });
+          if (!res.ok) throw new Error();
+          const data = await res.json();
+          setItems(data.items || []);
+          setTotal(data.total || 0);
+          setPage(data.page || 1);
+          setPages(data.pages || 1);
+        } catch { showToast('Failed to load items', 'error'); }
+        finally { setLoading(false); }
+      };
+
+      const fetchStats = async () => {
+        try {
+          const res = await fetch(`${API}/stats`);
+          if (res.ok) setStats(await res.json());
+        } catch {}
+      };
+
+      const fetchLogs = async (pg = 1) => {
+        setLoading(true);
+        try {
+          const res = await fetch(`${API}/admin/audit?page=${pg}&limit=30`, { headers });
+          if (!res.ok) throw new Error();
+          const data = await res.json();
+          setLogs(data.logs || []);
+          setLogPage(data.page || 1);
+          setLogPages(data.pages || 1);
+          setLogTotal(data.total || 0);
+        } catch { showToast('Failed to load audit log', 'error'); }
+        finally { setLoading(false); }
+      };
+
+      useEffect(() => {
+        fetchStats();
+        if (activeView === 'items') fetchItems(1);
+        else fetchLogs(1);
+      }, [activeView, filterType, filterStatus]);
+
+      const doAction = async (itemId, action) => {
+        const key = `${itemId}-${action}`;
+        setActionLoading(key);
+        try {
+          const url = action === 'delete'
+            ? `${API}/admin/items/${itemId}`
+            : `${API}/admin/items/${itemId}/${action}`;
+          const method = action === 'delete' ? 'DELETE' : 'PATCH';
+          const res = await fetch(url, { method, headers });
+          if (!res.ok) throw new Error();
+          showToast(
+            action === 'delete' ? '🗑 Post deleted.' :
+            action === 'resolve' ? '✓ Marked as resolved.' :
+            '↩ Reopened as active.',
+            action === 'delete' ? 'warning' : 'success'
+          );
+          fetchItems(page);
+          fetchStats();
+        } catch { showToast('Action failed', 'error'); }
+        finally { setActionLoading(''); }
+      };
+
+      const confirmDelete = (item) => {
+        if (window.confirm(`Delete "${item.title}"?\nThis cannot be undone.`)) {
+          doAction(item.id, 'delete');
+        }
+      };
+
+      return (
+        <div className="admin-panel">
+          {/* Top bar */}
+          <div className="admin-topbar">
+            <div className="admin-topbar-title">
+              🛡 FindBack Admin <span>Panel</span>
+            </div>
+            <button className="btn btn-outline btn-sm" onClick={onClose} style={{ borderColor: '#444', color: '#ccc' }}>✕ Exit</button>
+          </div>
+
+          {/* Stats row */}
+          <div style={{ background: '#111', borderBottom: '1px solid #222', padding: '14px 28px', display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap', flexShrink: 0 }}>
+            <div className="admin-stats" style={{ margin: 0 }}>
+              <div className="admin-stat-card">
+                <div className="num" style={{ color: '#ff7043' }}>{stats.active_lost ?? '—'}</div>
+                <div className="lbl">Active Lost</div>
+              </div>
+              <div className="admin-stat-card">
+                <div className="num" style={{ color: '#4caf82' }}>{stats.active_found ?? '—'}</div>
+                <div className="lbl">Active Found</div>
+              </div>
+              <div className="admin-stat-card">
+                <div className="num">{stats.resolved ?? '—'}</div>
+                <div className="lbl">Resolved</div>
+              </div>
+              <div className="admin-stat-card">
+                <div className="num" style={{ color: '#c084fc' }}>{total}</div>
+                <div className="lbl">Showing</div>
+              </div>
+            </div>
+            <div className="admin-tab-row" style={{ marginLeft: 'auto' }}>
+              <button className={`admin-tab ${activeView === 'items' ? 'active' : ''}`} onClick={() => setActiveView('items')}>📋 Posts</button>
+              <button className={`admin-tab ${activeView === 'audit' ? 'active' : ''}`} onClick={() => setActiveView('audit')}>📜 Audit Log</button>
+            </div>
+          </div>
+
+          {/* Toolbar */}
+          {activeView === 'items' && (
+            <div className="admin-toolbar">
+              <input
+                className="admin-search"
+                placeholder="Search title, description, name, email..."
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+                onKeyDown={e => e.key === 'Enter' && fetchItems(1)}
+              />
+              <select className="admin-select" value={filterType} onChange={e => setFilterType(e.target.value)}>
+                <option value="">All Types</option>
+                <option value="lost">Lost</option>
+                <option value="found">Found</option>
+              </select>
+              <select className="admin-select" value={filterStatus} onChange={e => setFilterStatus(e.target.value)}>
+                <option value="">All Status</option>
+                <option value="active">Active</option>
+                <option value="resolved">Resolved</option>
+              </select>
+              <button className="btn btn-admin btn-sm" onClick={() => fetchItems(1)}>Search</button>
+            </div>
+          )}
+
+          {/* Content */}
+          <div className="admin-content">
+            {loading ? (
+              <div style={{ textAlign: 'center', padding: 60, color: '#555' }}><div className="spinner" /></div>
+            ) : activeView === 'items' ? (
+              <>
+                {items.length === 0 ? (
+                  <div className="admin-empty">No posts found.</div>
+                ) : (
+                  <div style={{ overflowX: 'auto' }}>
+                    <table className="admin-table">
+                      <thead>
+                        <tr>
+                          <th>Type</th>
+                          <th>Title</th>
+                          <th>Category</th>
+                          <th>Location</th>
+                          <th>Contact</th>
+                          <th>Status</th>
+                          <th>Posted</th>
+                          <th>Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {items.map(item => (
+                          <tr key={item.id}>
+                            <td>
+                              <span className={`admin-badge admin-badge-${item.type}`}>{item.type}</span>
+                            </td>
+                            <td style={{ maxWidth: 200, wordBreak: 'break-word' }}>
+                              <div style={{ fontWeight: 600, color: '#fff', marginBottom: 2 }}>{item.title}</div>
+                              <div style={{ fontSize: '.75rem', color: '#666', maxHeight: 36, overflow: 'hidden' }}>{item.description}</div>
+                            </td>
+                            <td style={{ color: '#a09a93' }}>{item.category}</td>
+                            <td style={{ color: '#a09a93' }}>📍 {item.location}</td>
+                            <td>
+                              <div className="admin-contact">
+                                <strong>{item.contact_name}</strong><br />
+                                {item.contact_email}<br />
+                                {item.contact_phone && <span>📞 {item.contact_phone}</span>}
+                              </div>
+                            </td>
+                            <td>
+                              <span className={`admin-badge admin-badge-${item.status}`}>{item.status}</span>
+                            </td>
+                            <td style={{ color: '#666', fontSize: '.78rem', whiteSpace: 'nowrap' }}>
+                              {new Date(item.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+                            </td>
+                            <td>
+                              <div className="admin-actions">
+                                {item.status === 'active' ? (
+                                  <button
+                                    className="admin-btn admin-btn-resolve"
+                                    disabled={actionLoading === `${item.id}-resolve`}
+                                    onClick={() => doAction(item.id, 'resolve')}
+                                  >✓ Resolve</button>
+                                ) : (
+                                  <button
+                                    className="admin-btn admin-btn-reopen"
+                                    disabled={actionLoading === `${item.id}-reopen`}
+                                    onClick={() => doAction(item.id, 'reopen')}
+                                  >↩ Reopen</button>
+                                )}
+                                <button
+                                  className="admin-btn admin-btn-delete"
+                                  disabled={actionLoading === `${item.id}-delete`}
+                                  onClick={() => confirmDelete(item)}
+                                >🗑 Delete</button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+                {pages > 1 && (
+                  <div className="admin-pagination">
+                    <button className="admin-btn admin-btn-reopen" disabled={page <= 1} onClick={() => fetchItems(page - 1)}>← Prev</button>
+                    <span style={{ color: '#888', fontSize: '.88rem' }}>Page {page} of {pages} ({total} total)</span>
+                    <button className="admin-btn admin-btn-reopen" disabled={page >= pages} onClick={() => fetchItems(page + 1)}>Next →</button>
+                  </div>
+                )}
+              </>
+            ) : (
+              <>
+                {logs.length === 0 ? (
+                  <div className="admin-empty">No audit logs yet.</div>
+                ) : (
+                  <div style={{ overflowX: 'auto' }}>
+                    <table className="admin-log-table">
+                      <thead>
+                        <tr>
+                          <th>Time</th>
+                          <th>Action</th>
+                          <th>Item ID</th>
+                          <th>IP</th>
+                          <th>Detail</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {logs.map(log => (
+                          <tr key={log.id}>
+                            <td style={{ color: '#666', whiteSpace: 'nowrap' }}>{new Date(log.ts).toLocaleString('en-IN')}</td>
+                            <td><span className={`action-tag action-${log.action}`}>{log.action}</span></td>
+                            <td style={{ fontFamily: 'monospace', fontSize: '.75rem', color: '#666' }}>{log.item_id ? log.item_id.slice(0, 8) + '…' : '—'}</td>
+                            <td style={{ color: '#666', fontFamily: 'monospace', fontSize: '.78rem' }}>{log.ip_address || '—'}</td>
+                            <td style={{ color: '#a09a93', maxWidth: 200, wordBreak: 'break-all' }}>{log.detail || '—'}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+                {logPages > 1 && (
+                  <div className="admin-pagination">
+                    <button className="admin-btn admin-btn-reopen" disabled={logPage <= 1} onClick={() => fetchLogs(logPage - 1)}>← Prev</button>
+                    <span style={{ color: '#888', fontSize: '.88rem' }}>Page {logPage} of {logPages} ({logTotal} total)</span>
+                    <button className="admin-btn admin-btn-reopen" disabled={logPage >= logPages} onClick={() => fetchLogs(logPage + 1)}>Next →</button>
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+        </div>
+      );
+    }
+
     // ── App ──
     function App() {
       const [items, setItems] = useState([]);
@@ -1429,6 +2095,9 @@
       const [showPost, setShowPost] = useState(false);
       const [postType, setPostType] = useState('lost');
       const [selected, setSelected] = useState(null);
+      const [showAdminLogin, setShowAdminLogin] = useState(false);
+      const [adminToken, setAdminToken] = useState(null);
+      const [showAdminPanel, setShowAdminPanel] = useState(false);
 
       // Listen for openItem events dispatched by match cards
       useEffect(() => {
@@ -1492,6 +2161,7 @@
             <div className="nav-actions">
               <button className="btn btn-ghost" onClick={() => openPost('lost')}>⚠ I Lost Something</button>
               <button className="btn btn-primary" onClick={() => openPost('found')}>+ I Found Something</button>
+              <button className="btn btn-admin btn-sm" onClick={() => { if (adminToken) setShowAdminPanel(true); else setShowAdminLogin(true); }}>🛡 Admin</button>
             </div>
           </nav>
 
@@ -1581,6 +2251,21 @@
           )}
 
           {toast && <Toast msg={toast.msg} type={toast.type} onDone={() => setToast(null)} />}
+
+          {showAdminLogin && (
+            <AdminLoginModal
+              onClose={() => setShowAdminLogin(false)}
+              onSuccess={(token) => { setAdminToken(token); setShowAdminLogin(false); setShowAdminPanel(true); }}
+            />
+          )}
+
+          {showAdminPanel && adminToken && (
+            <AdminPanel
+              adminToken={adminToken}
+              onClose={() => setShowAdminPanel(false)}
+              showToast={showToast}
+            />
+          )}
         </>
       );
     }
