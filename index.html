@@ -1480,20 +1480,29 @@
     }
 
     // ── Detail Modal ──
-    function DetailModal({ item, onClose, onResolve, onDelete, showToast }) {
+    function DetailModal({ item: initialItem, onClose, onResolve, onDelete, showToast }) {
       useEffect(() => { document.body.classList.add('modal-open'); return () => document.body.classList.remove('modal-open'); }, []);
+      const [item, setItem] = useState(initialItem);
       const icon = CATEGORY_ICONS[item.category] || '📦';
       const [token, setToken] = useState('');
       const [actionLoading, setActionLoading] = useState('');
       const [matches, setMatches] = useState([]);
       const [matchLoading, setMatchLoading] = useState(true);
 
+      // Fetch full item detail (unmasked phone/email) on open
+      useEffect(() => {
+        fetch(`${API}/items/${initialItem.id}`)
+          .then(r => r.json())
+          .then(data => { if (data && data.id) setItem(data); })
+          .catch(() => {});
+      }, [initialItem.id]);
+
       // Fetch match suggestions: opposite type, same category
       useEffect(() => {
         const oppositeType = item.type === 'lost' ? 'found' : 'lost';
         fetch(`${API}/items?type=${oppositeType}&category=${encodeURIComponent(item.category)}&status=active`)
           .then(r => r.json())
-          .then(data => { setMatches(data.filter(m => m.id !== item.id).slice(0, 6)); })
+          .then(data => { setMatches((data.items || data).filter(m => m.id !== item.id).slice(0, 6)); })
           .catch(() => { })
           .finally(() => setMatchLoading(false));
       }, [item.id]);
@@ -1515,12 +1524,12 @@
         finally { setActionLoading(''); }
       };
 
-      // Format phone for WhatsApp (strip spaces, dashes; add country code if missing)
+      // Format phone for WhatsApp — strips all non-digits, adds Indian country code if missing
       const waPhone = (phone) => {
-        let p = phone.replace(/[^0-9+]/g, '');
-        if (p.startsWith('0')) p = '91' + p.slice(1);
-        if (!p.startsWith('+') && !p.startsWith('91')) p = '91' + p;
-        return p.replace('+', '');
+        let p = phone.replace(/[^0-9]/g, '');  // strip everything except digits
+        if (p.startsWith('0')) p = '91' + p.slice(1);  // 0XXXXXXXXXX → 91XXXXXXXXXX
+        if (p.length === 10) p = '91' + p;              // 10-digit → add 91
+        return p;
       };
 
       return (
