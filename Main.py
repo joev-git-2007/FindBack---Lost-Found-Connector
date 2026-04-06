@@ -55,6 +55,7 @@ VALID_CATEGORIES = {
     "Jewelry & Accessories","Documents & ID","Clothing","Pets",
     "Vehicles","Sports Equipment","Books","Other"
 }
+ADMIN_TOKEN = os.getenv("ADMIN_TOKEN", "")  # Set this env var in production!
 
 # ── In-memory rate-limit stores ───────────────────────────────────────────────
 # { ip: [timestamp, ...] }
@@ -519,3 +520,140 @@ def get_stats():
 @app.get("/categories")
 def get_categories():
     return sorted(VALID_CATEGORIES)
+# ── Admin Helpers ─────────────────────────────────────────────────────────────
+
+def verify_admin(request: Request):
+    """Check admin token from x-admin-token header."""
+    if not ADMIN_TOKEN:
+        raise HTTPException(503, "Admin access is not configured. Set the ADMIN_TOKEN environment variable.")
+    auth = request.headers.get("x-admin-token", "")
+    if not (auth and len(auth) == len(ADMIN_TOKEN) and
+            hashlib.sha256(auth.encode()).digest() == hashlib.sha256(ADMIN_TOKEN.encode()).digest()):
+        raise HTTPException(403, "Invalid admin token")
+
+# ── Admin Routes ──────────────────────────────────────────────────────────────
+
+@app.get("/admin/items")
+def admin_list_items(
+    request:  Request,
+    type:     Optional[str] = None,
+    category: Optional[str] = None,
+    status:   Optional[str] = None,
+    q:        Optional[str] = None,
+    page:     int = 1,
+    limit:    int = 50,
+):
+    """Admin: list all items with full unmasked contact details."""
+    verify_admin(request)
+    page  = max(1, page)
+    limit = min(100, max(1, limit))
+    offset = (page - 1) * limit
+
+    conn   = get_db()
+    where  = "WHERE 1=1"
+    params = []
+
+    if type and type in ('lost', 'found'):
+        where += " AND type=?"; params.append(type)
+    if category and category in VALID_CATEGORIES:
+        where += " AND category=?"; params.append(category)
+    if status in ('active', 'resolved'):
+        where += " AND status=?"; params.append(status)
+    if q:
+        sq = f"%{sanitize(q, 100)}%"
+        where += " AND (title LIKE ? OR description LIKE ? OR contact_name LIKE ? OR contact_email LIKE ?)"
+        params.extend([sq, sq, sq, sq])
+
+    total = conn.execute(f"SELECT COUNT(*) AS cnt FROM items {where}", params).fetchone()['cnt']
+    rows  = conn.execute(
+        f"SELECT * FROM items {where} ORDER BY created_at DESC LIMIT %s OFFSET %s",
+        params + [limit, offset]
+    ).fetchall()
+    conn.close()
+
+    return {
+        "items": [dict(r) for r in rows],
+        "total": total,
+        "page":  page,
+        "pages": max(1, -(-total // limit))
+    }
+
+@app.patch("/admin/items/{item_id}/resolve")
+def admin_resolve_item(item_id: str, request: Request):
+    """Admin: mark any item as resolved without edit token."""
+    verify_admin(request)
+    ip = get_ip(request)
+    conn = get_db()
+    row = conn.execute("SELECT id FROM items WHERE id=?", (item_id,)).fetchone()
+    if not row:
+        conn.close()
+        raise HTTPException(404, "Item not found")
+    conn.execute("UPDATE items SET status='resolved' WHERE id=?", (item_id,))
+    conn.commit()
+    conn.close()
+    audit("ADMIN_RESOLVE", item_id, ip)
+    return {"message": "Item marked as resolved"}
+
+@app.patch("/admin/items/{item_id}/reopen")
+def admin_reopen_item(item_id: str, request: Request):
+    """Admin: reopen a resolved item back to active."""
+    verify_admin(request)
+    ip = get_ip(request)
+    conn = get_db()
+    row = conn.execute("SELECT id FROM items WHERE id=?", (item_id,)).fetchone()
+    if not row:
+        conn.close()
+        raise HTTPException(404, "Item not found")
+    conn.execute("UPDATE items SET status='active' WHERE id=?", (item_id,))
+    conn.commit()
+    conn.close()
+    audit("ADMIN_REOPEN", item_id, ip)
+    return {"message": "Item reopened as active"}
+
+@app.delete("/admin/items/{item_id}")
+def admin_delete_item(item_id: str, request: Request):
+    """Admin: delete any item without edit token."""
+    verify_admin(request)
+    ip = get_ip(request)
+    conn = get_db()
+    row = conn.execute("SELECT title, type FROM items WHERE id=?", (item_id,)).fetchone()
+    if not row:
+        conn.close()
+        raise HTTPException(404, "Item not found")
+    detail = f"title={row['title'][:40]} type={row['type']}"
+    conn.execute("DELETE FROM items WHERE id=?", (item_id,))
+    conn.commit()
+    conn.close()
+    audit("ADMIN_DELETE", item_id, ip, detail)
+    return {"message": "Item deleted by admin"}
+
+@app.get("/admin/audit")
+def admin_audit_log(
+    request: Request,
+    page:    int = 1,
+    limit:   int = 50,
+):
+    """Admin: view the audit log."""
+    verify_admin(request)
+    page   = max(1, page)
+    limit  = min(100, max(1, limit))
+    offset = (page - 1) * limit
+    conn   = get_db()
+    total  = conn.execute("SELECT COUNT(*) AS cnt FROM audit_log").fetchone()['cnt']
+    rows   = conn.execute(
+        "SELECT * FROM audit_log ORDER BY ts DESC LIMIT %s OFFSET %s",
+        [limit, offset]
+    ).fetchall()
+    conn.close()
+    return {
+        "logs":  [dict(r) for r in rows],
+        "total": total,
+        "page":  page,
+        "pages": max(1, -(-total // limit))
+    }
+
+@app.post("/admin/verify")
+def admin_verify(request: Request):
+    """Admin: verify that the supplied token is valid."""
+    verify_admin(request)
+    return {"ok": True}
