@@ -852,7 +852,8 @@
       font-size: 5rem;
       border-radius: 12px;
       margin-bottom: 20px;
-      overflow: hidden
+      overflow: hidden;
+      position: relative
     }
 
     .detail-img img {
@@ -860,6 +861,75 @@
       height: 100%;
       object-fit: cover;
       border-radius: 12px
+    }
+
+    .detail-img.has-image {
+      cursor: zoom-in
+    }
+
+    .detail-img .img-zoom-hint {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      background: rgba(0,0,0,.55);
+      color: #fff;
+      font-size: .72rem;
+      padding: 4px 9px;
+      border-radius: 20px;
+      font-family: 'DM Sans', sans-serif;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity .2s
+    }
+
+    .detail-img.has-image:hover .img-zoom-hint {
+      opacity: 1
+    }
+
+    /* LIGHTBOX */
+    .lightbox-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.92);
+      z-index: 500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      animation: fadeIn .18s ease;
+      cursor: zoom-out
+    }
+
+    .lightbox-img {
+      max-width: 100%;
+      max-height: 90vh;
+      object-fit: contain;
+      border-radius: 10px;
+      box-shadow: 0 8px 48px rgba(0,0,0,.6);
+      animation: slideUp .2s ease
+    }
+
+    .lightbox-close {
+      position: fixed;
+      top: 20px;
+      right: 24px;
+      background: rgba(255,255,255,.12);
+      border: none;
+      color: #fff;
+      font-size: 1.3rem;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background .15s;
+      z-index: 501
+    }
+
+    .lightbox-close:hover {
+      background: rgba(255,255,255,.25)
     }
 
     .detail-title {
@@ -1479,6 +1549,26 @@
       );
     }
 
+    // ── Lightbox ──
+    function Lightbox({ src, alt, onClose }) {
+      useEffect(() => {
+        const onKey = (e) => { if (e.key === 'Escape') onClose(); };
+        document.addEventListener('keydown', onKey);
+        return () => document.removeEventListener('keydown', onKey);
+      }, []);
+      return (
+        <div className="lightbox-overlay" onClick={onClose}>
+          <button className="lightbox-close" onClick={onClose}>✕</button>
+          <img
+            className="lightbox-img"
+            src={src}
+            alt={alt}
+            onClick={e => e.stopPropagation()}
+          />
+        </div>
+      );
+    }
+
     // ── Detail Modal ──
     function DetailModal({ item: initialItem, onClose, onResolve, onDelete, showToast }) {
       useEffect(() => { document.body.classList.add('modal-open'); return () => document.body.classList.remove('modal-open'); }, []);
@@ -1488,6 +1578,7 @@
       const [actionLoading, setActionLoading] = useState('');
       const [matches, setMatches] = useState([]);
       const [matchLoading, setMatchLoading] = useState(true);
+      const [lightbox, setLightbox] = useState(false);
 
       // Fetch full item detail (unmasked phone/email) on open
       useEffect(() => {
@@ -1542,9 +1633,17 @@
               <button className="close-btn" onClick={onClose}>✕</button>
             </div>
             <div className="modal-body">
-              <div className="detail-img">
-                {item.image_base64 ? <img src={item.image_base64} alt={item.title} /> : <span>{icon}</span>}
+              <div
+                className={`detail-img${item.image_base64 ? ' has-image' : ''}`}
+                onClick={() => item.image_base64 && setLightbox(true)}
+              >
+                {item.image_base64
+                  ? <><img src={item.image_base64} alt={item.title} /><span className="img-zoom-hint">🔍 Click to enlarge</span></>
+                  : <span>{icon}</span>}
               </div>
+              {lightbox && item.image_base64 && (
+                <Lightbox src={item.image_base64} alt={item.title} onClose={() => setLightbox(false)} />
+              )}
               <div className="detail-title">{item.title}</div>
               <p className="detail-desc">{item.description}</p>
               <div className="info-grid">
